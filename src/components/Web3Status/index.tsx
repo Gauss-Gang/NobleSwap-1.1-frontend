@@ -42,6 +42,10 @@ const IconWrapper = styled.div<{ size?: number }>`
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
+  background: linear-gradient(90deg, ${({ theme }) => theme.nobleRed} 0%, ${({ theme }) => theme.noblePurple} 100%);
+  border-color: transparent;
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
+  color: ${({ theme }) => theme.white};
   width: 100%;
   align-items: center;
   padding: 0.4rem;
@@ -55,6 +59,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
 const Web3StatusError = styled(Web3StatusGeneric)`
   background-color: ${({ theme }) => theme.red1};
   border: 1px solid ${({ theme }) => theme.red1};
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
   color: ${({ theme }) => theme.white};
   font-weight: 500;
   :hover,
@@ -64,35 +69,14 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 `;
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
-  background-color: ${({ theme }) => theme.primary4};
-  border: none;
-  color: ${({ theme }) => theme.primaryText1};
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
   font-weight: 500;
-
-  :hover,
-  :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-    color: ${({ theme }) => theme.primaryText1};
-  }
-
-  ${({ faded }) =>
-    faded &&
-    css`
-      background-color: ${({ theme }) => theme.primary5};
-      border: 1px solid ${({ theme }) => theme.primary5};
-      color: ${({ theme }) => theme.primaryText1};
-
-      :hover,
-      :focus {
-        border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => darken(0.05, theme.primaryText1)};
-      }
-    `}
 `;
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
   border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
   font-weight: 500;
   :hover,
@@ -203,7 +187,7 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-        <Text>{t('Connect to a wallet')}</Text>
+        <Text>{t('Connect to wallet')}</Text>
       </Web3StatusConnect>
     );
   }

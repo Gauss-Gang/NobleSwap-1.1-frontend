@@ -41,16 +41,16 @@ export function colors(darkMode: boolean): Colors {
     black,
 
     // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
+    text1: darkMode ? '#FFFFFF' : '#FFFFFF',
     text2: darkMode ? '#C3C5CB' : '#565A69',
     text3: darkMode ? '#6C7284' : '#888D9B',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
-    bg1: darkMode ? '#1d1f24' : '#fafafa',
+    bg1: darkMode ? '#1d1f24' : '#09003F',
     bg2: darkMode ? '#27292e' : '#ededed',
-    bg3: darkMode ? '#3a3d47' : '#e6e6e8',
+    bg3: darkMode ? '#3a3d47' : '#1b3279',
     bg4: darkMode ? '#4c4f5c' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
 
@@ -81,8 +81,12 @@ export function colors(darkMode: boolean): Colors {
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     blue1: '#3B6A9C',
+    nobleRed: '#DB2456',
+    noblePurple: '#833CFF',
   };
 }
+
+const borderRadiusSlanted = '20px 0px';
 
 export function theme(darkMode: boolean): DefaultTheme {
   return {
@@ -109,6 +113,7 @@ export function theme(darkMode: boolean): DefaultTheme {
       display: flex;
       flex-flow: row nowrap;
     `,
+    borderRadiusSlanted,
   };
 }
 
@@ -129,7 +134,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={'text2'} {...props} />;
   },
   link(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'primary1'} {...props} />;
+    return <TextWrapper fontWeight={500} color={'text1'} {...props} />;
   },
   black(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'text1'} {...props} />;
@@ -209,17 +214,12 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
 }
 
 body {
   min-height: 100vh;
   background-position: 0 -30vh;
   background-repeat: no-repeat;
-  background-image: ${({ theme }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${transparentize(0.8, theme.primary1)} 0%, ${transparentize(
-      1,
-      theme.bg1
-    )} 100%)`};
-}
-`;
+  background: radial-gradient(circle, rgba(64,119,249,1) 0%, rgba(7,0,47,1) 100%);
+
+}`;

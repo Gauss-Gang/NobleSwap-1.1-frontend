@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import { ExternalLink } from '../../theme';
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+  background-color: ${({ theme, active }) => (active ? theme.noblePurple : theme.bg1)};
   padding: 1rem;
   outline: none;
   border: 1px solid;
-  border-radius: 12px;
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
   width: 100% !important;
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
-  border-color: ${({ theme, active }) => (active ? theme.bg4 : theme.bg3)};
+  border-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg1)};
 `;
 
 const OptionCard = styled(InfoCard as any)`

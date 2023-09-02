@@ -67,6 +67,33 @@ export const ButtonPrimary = styled(Base)`
   }
 `;
 
+export const ButtonSlanted = styled(Base)`
+  background: linear-gradient(90deg, ${({ theme }) => theme.nobleRed} 0%, ${({ theme }) => theme.noblePurple} 100%);
+  border-color: transparent;
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
+  color: white;
+  &:focus {
+    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+  }
+  &:hover {
+    background: linear-gradient(90deg, ${({ theme }) => theme.noblePurple} 0%, ${({ theme }) => theme.nobleRed} 100%);
+  }
+  &:active {
+    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
+  }
+  &:disabled {
+    background-color: ${({ theme, altDisabledStyle, disabled }) =>
+      altDisabledStyle ? (disabled ? theme.bg3 : theme.primary1) : theme.bg3};
+    color: ${({ theme, altDisabledStyle, disabled }) =>
+      altDisabledStyle ? (disabled ? theme.text3 : 'white') : theme.text3};
+    cursor: auto;
+    box-shadow: none;
+    border: 1px solid transparent;
+    outline: none;
+    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
+  }
+`;
+
 export const ButtonSecondary = styled(Base)`
   border: 1px solid ${({ theme }) => theme.primary4};
   color: ${({ theme }) => theme.primary1};

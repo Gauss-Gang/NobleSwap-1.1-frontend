@@ -18,6 +18,7 @@ import RemoveLiquidity from './RemoveLiquidity';
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects';
 import Swap from './Swap';
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects';
+import Logo from '../assets/images/logo.png';
 
 const AppWrapper = styled.div`
   min-height: 100vh;
@@ -44,6 +45,13 @@ const BodyWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
+  position: relative;
+`;
+
+const NobleImageWrapper = styled.img`
+  position: fixed;
+  left: 5%;
+  bottom: 5%;
 `;
 
 export default function App() {
@@ -76,6 +84,7 @@ export default function App() {
               <Route component={RedirectPathToSwapOnly} />
             </Switch>
           </Web3ReactManager>
+          <NobleImageWrapper src={Logo} />
         </BodyWrapper>
       </AppWrapper>
     </Suspense>
