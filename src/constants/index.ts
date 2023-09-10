@@ -9,36 +9,34 @@ import {
 } from '../connectors';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const FACTORY_ADDRESS = '0x6Bd5A1A63ffF10De3c6B7C667040E9AE1B47fDf2';
-export const ROUTER_ADDRESS = '0xA4E1f3fD10E2397f58926E215Ed331D7cDA14056';
+export const FACTORY_ADDRESS = '0xD68BfbaEFb79653B1F63FD25B7ba48Fb81A047E4';
+export const ROUTER_ADDRESS = '0xa4478f8c1eD4913E511543fD0B2a2460E89500EB';
 
-export const LP_TOKEN_NAME = 'Swap-LP-Token';
-export const LP_TOKEN_SYMBOL = 'SWAP-LP';
+export const LP_TOKEN_NAME = 'Noble-LP-Token';
+export const LP_TOKEN_SYMBOL = 'NOBLE-LP';
 
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[];
 };
 
-export const DAI = new Token(
+/*
+export const GUD = new Token(
   ChainId.MAINNET,
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  '',
   18,
-  'DAI',
-  'Dai Stablecoin'
+  'GUD',
+  'Gauss Stablecoin'
 );
-export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C');
-export const USDT = new Token(ChainId.MAINNET, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether USD');
-export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound');
-export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker');
-export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
-export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
+*/
+export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stablecoin');
+
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
-export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
+export const AVERAGE_BLOCK_TIME_IN_SECS = 3;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS;
-export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC';
+export const TIMELOCK_ADDRESS = '0xc06A2A3E8F34dD76945f56068Fc336FBa9FF7628';
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   [TIMELOCK_ADDRESS]: 'Timelock',
@@ -46,16 +44,14 @@ export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
-  [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
-  [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
+  [ChainId.GIL]: [WETH[ChainId.GIL]],
 };
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
+//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 /**
@@ -64,34 +60,29 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
  */
 export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {
-    [AMPL.address]: [DAI, WETH[ChainId.MAINNET]],
+  
+  // Example:  [AMPL.address]: [DAI, WETH[ChainId.MAINNET]],
+
   },
 };
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
-  [ChainId.ROPSTEN]: [...WETH_ONLY[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [...WETH_ONLY[ChainId.RINKEBY]],
-  [ChainId.GÖRLI]: [...WETH_ONLY[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [...WETH_ONLY[ChainId.KOVAN]],
+//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-  [ChainId.MAINNET]: [
-    [
-      new Token(ChainId.MAINNET, '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', 8, 'cDAI', 'Compound Dai'),
-      new Token(ChainId.MAINNET, '0x39AA39c021dfbaE8faC545936693aC917d5E7563', 8, 'cUSDC', 'Compound USD Coin'),
-    ],
-    [USDC, USDT],
-    [DAI, USDT],
+  [ChainId.GIL]: [
+    [WETH, GUD],
   ],
 };
 
