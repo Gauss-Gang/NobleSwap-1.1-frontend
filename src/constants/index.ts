@@ -31,7 +31,6 @@ export const GUD = new Token(
 */
 export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stablecoin');
 
-
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 3;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
@@ -50,7 +49,6 @@ const WETH_ONLY: ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
@@ -59,31 +57,23 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
  * tokens.
  */
 export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-  [ChainId.MAINNET]: {
-  
-  // Example:  [AMPL.address]: [DAI, WETH[ChainId.MAINNET]],
-
-  },
+  [ChainId.MAINNET]: {},
 };
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
-//  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], GUD],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-  [ChainId.GIL]: [
-    [WETH, GUD],
-  ],
+  [ChainId.GIL]: [[WETH[ChainId.GIL], GUD]],
 };
 
 export interface WalletInfo {
