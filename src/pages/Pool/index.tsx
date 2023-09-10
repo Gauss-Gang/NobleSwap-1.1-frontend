@@ -10,7 +10,7 @@ import { TYPE, HideSmall } from '../../theme';
 import { Text } from 'rebass';
 import Card from '../../components/Card';
 import { RowBetween, RowFixed } from '../../components/Row';
-import { ButtonPrimary } from '../../components/Button';
+import { ButtonPrimary, ButtonSlanted } from '../../components/Button';
 import { AutoColumn } from '../../components/Column';
 
 import { useActiveWeb3React } from '../../hooks';
@@ -43,6 +43,13 @@ const ButtonRow = styled(RowFixed)`
 `;
 
 const ResponsiveButtonPrimary = styled(ButtonPrimary)`
+  width: fit-content;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 48%;
+  `};
+`;
+
+const ResponsiveButtonSlanted = styled(ButtonSlanted)`
   width: fit-content;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 48%;
@@ -105,14 +112,16 @@ export default function Pool() {
                 <TYPE.mediumHeader style={{ justifySelf: 'flex-start' }}>Your liquidity</TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonPrimary as={Link} padding="6px 10px" to="/create/ETH">
-                  Create a pair
-                </ResponsiveButtonPrimary>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} padding="6px 10px" to="/add/ETH">
+                <ResponsiveButtonSlanted as={Link} padding="6px 10px" to="/create/ETH">
                   <Text fontWeight={500} fontSize={16}>
-                    Add Liquidity
+                    Create a pair
                   </Text>
-                </ResponsiveButtonPrimary>
+                </ResponsiveButtonSlanted>
+                <ResponsiveButtonSlanted id="join-pool-button" as={Link} padding="6px 10px" to="/add/ETH">
+                  <Text fontWeight={500} fontSize={16}>
+                    Add liquidity
+                  </Text>
+                </ResponsiveButtonSlanted>
               </ButtonRow>
             </TitleRow>
 

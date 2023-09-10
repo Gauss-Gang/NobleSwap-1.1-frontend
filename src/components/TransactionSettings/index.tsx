@@ -42,7 +42,7 @@ const Option = styled(FancyButton)<{ active: boolean }>`
   :hover {
     cursor: pointer;
   }
-  background-color: ${({ active, theme }) => active && theme.primary1};
+  background-color: ${({ active, theme }) => active && theme.bg3};
   color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `;
 

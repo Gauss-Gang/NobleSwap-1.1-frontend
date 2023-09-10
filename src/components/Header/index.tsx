@@ -6,7 +6,7 @@ import { darken } from 'polished';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import Logo from '../../assets/svg/logo.svg';
+import Logo from '../../assets/images/logo-light.png';
 import LogoDark from '../../assets/svg/logo_white.svg';
 import { useActiveWeb3React } from '../../hooks';
 import { useDarkModeManager } from '../../state/user/hooks';
@@ -124,7 +124,8 @@ const HideSmall = styled.span`
 `;
 
 const NetworkCard = styled(LightCard)`
-  border-radius: 0.8rem;
+  border-radius: ${({ theme }) => theme.borderRadiusSlanted};
+  background: ${({ theme }) => theme.bg1};
   padding: 8px 12px;
   box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px,
     rgba(0, 0, 0, 0.01) 0px 24px 32px;
@@ -258,7 +259,7 @@ export default function Header() {
       <HeaderRow>
         <Title href=".">
           <Icon>
-            <img width={'22px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
           </Icon>
         </Title>
       </HeaderRow>
@@ -298,11 +299,11 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
         </HeaderElement>
-        <HeaderElementWrap>
+        {/* <HeaderElementWrap>
           <StyledMenuButton onClick={toggleDarkMode}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
-        </HeaderElementWrap>
+        </HeaderElementWrap> */}
       </HeaderControls>
     </HeaderFrame>
   );

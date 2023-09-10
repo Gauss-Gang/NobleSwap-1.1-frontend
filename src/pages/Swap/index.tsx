@@ -4,7 +4,7 @@ import { ArrowDown } from 'react-feather';
 import { Text } from 'rebass';
 import { ThemeContext } from 'styled-components';
 import AddressInputPanel from '../../components/AddressInputPanel';
-import { ButtonError, ButtonPrimary, ButtonConfirmed } from '../../components/Button';
+import { ButtonError, ButtonPrimary, ButtonConfirmed, ButtonSlanted } from '../../components/Button';
 import Card, { GreyCard } from '../../components/Card';
 import Column, { AutoColumn } from '../../components/Column';
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal';
@@ -345,7 +345,7 @@ export default function Swap() {
 
           <BottomGrouping>
             {!account ? (
-              <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
+              <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
             ) : showWrap ? (
               <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
                 {wrapInputError ??

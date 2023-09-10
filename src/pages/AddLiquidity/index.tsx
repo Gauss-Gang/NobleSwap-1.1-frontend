@@ -6,7 +6,7 @@ import { Plus } from 'react-feather';
 import { RouteComponentProps } from 'react-router-dom';
 import { Text } from 'rebass';
 import { ThemeContext } from 'styled-components';
-import { ButtonError, ButtonPrimary } from '../../components/Button';
+import { ButtonError, ButtonPrimary, ButtonSlanted } from '../../components/Button';
 import { LightCard } from '../../components/Card';
 import { AutoColumn, ColumnCenter } from '../../components/Column';
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal';
@@ -317,15 +317,11 @@ export default function AddLiquidity({
                 <ColumnCenter>
                   <LightCard>
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={600} color={'primaryText1'}>
-                        You are the first liquidity provider.
-                      </TYPE.link>
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <TYPE.link fontWeight={600}>You are the first liquidity provider.</TYPE.link>
+                      <TYPE.link fontWeight={400}>
                         The ratio of tokens you add will set the price of this pool.
                       </TYPE.link>
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
-                        Once you are happy with the rate click supply to review.
-                      </TYPE.link>
+                      <TYPE.link fontWeight={400}>Once you are happy with the rate click supply to review.</TYPE.link>
                     </AutoColumn>
                   </LightCard>
                 </ColumnCenter>
@@ -333,7 +329,7 @@ export default function AddLiquidity({
                 <ColumnCenter>
                   <LightCard>
                     <AutoColumn gap="10px">
-                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                      <TYPE.link fontWeight={400}>
                         <b>Tip:</b> When you add liquidity, you will receive pool tokens representing your position.
                         These tokens automatically earn fees proportional to your share of the pool, and can be redeemed
                         at any time.
@@ -390,7 +386,7 @@ export default function AddLiquidity({
             )}
 
             {!account ? (
-              <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
+              <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
             ) : (
               <AutoColumn gap={'md'}>
                 {(approvalA === ApprovalState.NOT_APPROVED ||

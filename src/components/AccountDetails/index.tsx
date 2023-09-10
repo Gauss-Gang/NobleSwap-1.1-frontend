@@ -23,7 +23,7 @@ import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg';
 // import FortmaticIcon from '../../assets/images/fortmaticIcon.png';
 // import PortisIcon from '../../assets/images/portisIcon.png';
 import Identicon from '../Identicon';
-import { ButtonSecondary } from '../Button';
+import { ButtonPrimary, ButtonSecondary } from '../Button';
 import { ExternalLink as LinkIcon } from 'react-feather';
 import { ExternalLink, LinkStyledButton, TYPE } from '../../theme';
 
@@ -103,7 +103,7 @@ const LowerSection = styled.div`
   padding: 1.5rem;
   flex-grow: 1;
   overflow: auto;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg3};
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
@@ -189,7 +189,7 @@ const TransactionListWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
 `;
 
-const WalletAction = styled(ButtonSecondary)`
+const WalletAction = styled(ButtonPrimary)`
   width: fit-content;
   font-weight: 400;
   margin-left: 8px;

@@ -7,7 +7,7 @@ import { ArrowDown, Plus } from 'react-feather';
 import { RouteComponentProps } from 'react-router';
 import { Text } from 'rebass';
 import { ThemeContext } from 'styled-components';
-import { ButtonPrimary, ButtonError, ButtonConfirmed } from '../../components/Button';
+import { ButtonPrimary, ButtonError, ButtonConfirmed, ButtonSlanted } from '../../components/Button';
 import { GreyCard, LightCard } from '../../components/Card';
 import { AutoColumn, ColumnCenter } from '../../components/Column';
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal';
@@ -492,7 +492,7 @@ export default function RemoveLiquidity({
           <AutoColumn gap="md">
             <GreyCard>
               <AutoColumn gap="10px">
-                <TYPE.link fontWeight={400} color={'primaryText1'}>
+                <TYPE.link fontWeight={400}>
                   <b>Tip:</b> Removing pool tokens converts your position back into underlying tokens at the current
                   rate, proportional to your share of the pool. Accrued fees are included in the amounts you receive.
                 </TYPE.link>
@@ -574,7 +574,7 @@ export default function RemoveLiquidity({
                               currencyB === ETHER ? WETH[chainId].address : currencyIdB
                             }`}
                           >
-                            Receive WETH
+                            Receive wGANG
                           </StyledInternalLink>
                         ) : oneCurrencyIsWETH ? (
                           <StyledInternalLink
@@ -582,7 +582,7 @@ export default function RemoveLiquidity({
                               currencyA && currencyEquals(currencyA, WETH[chainId]) ? 'ETH' : currencyIdA
                             }/${currencyB && currencyEquals(currencyB, WETH[chainId]) ? 'ETH' : currencyIdB}`}
                           >
-                            Receive ETH
+                            Receive GANG
                           </StyledInternalLink>
                         ) : null}
                       </RowBetween>
@@ -654,7 +654,7 @@ export default function RemoveLiquidity({
             )}
             <div style={{ position: 'relative' }}>
               {!account ? (
-                <ButtonPrimary onClick={toggleWalletModal}>Connect Wallet</ButtonPrimary>
+                <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
               ) : (
                 <RowBetween>
                   <ButtonConfirmed
