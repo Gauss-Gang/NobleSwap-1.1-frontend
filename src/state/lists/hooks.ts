@@ -43,7 +43,7 @@ export type TokenAddressMap = Readonly<
  */
 const EMPTY_LIST: TokenAddressMap = {
   [ChainId.KOVAN]: {},
-  [ChainId.RINKEBY]: {},
+  [ChainId.GIL]: {},
   [ChainId.ROPSTEN]: {},
   [ChainId.GÖRLI]: {},
   [ChainId.MAINNET]: {},

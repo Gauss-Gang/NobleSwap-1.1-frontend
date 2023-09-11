@@ -26,7 +26,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 4],
+  supportedChainIds: [1, 1452],
 });
 
 // mainnet only
@@ -52,6 +52,6 @@ export const walletconnect = new WalletConnectConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: REACT_APP_NETWORK_URL,
-  appName: 'Swap',
+  appName: 'NobleSwap',
   // appLogoUrl: '',
 });
