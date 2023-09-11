@@ -19,7 +19,7 @@ import ImportRow from './ImportRow';
 import { wrappedCurrency } from 'utils/wrappedCurrency';
 
 function currencyKey(currency: Currency): string {
-  return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : '';
+  return currency instanceof Token ? currency.address : currency === ETHER ? 'GANG' : '';
 }
 
 const StyledBalanceText = styled(Text)`

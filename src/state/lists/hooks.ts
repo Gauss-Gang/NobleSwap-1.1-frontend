@@ -1,5 +1,5 @@
 import { toChecksumAddress } from 'web3-utils';
-import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list';
+import DEFAULT_TOKEN_LIST from '../../data/defaultTokenList.json'; // Direct replacement of @uniswap/default-token-list
 import { ChainId, Token } from '@uniswap/sdk';
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists';
 import { useMemo } from 'react';
@@ -53,25 +53,27 @@ const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null;
 
 export function listToTokenMap(list: TokenList): TokenAddressMap {
+  console.log('list', list);
+
   const result = listCache?.get(list);
   if (result) return result;
 
-  const map = list.tokens.reduce<TokenAddressMap>(
+  const map = list?.tokens?.reduce<TokenAddressMap>(
     (tokenMap, tokenInfo) => {
       const tags: TagInfo[] =
-        tokenInfo.tags
+        tokenInfo?.tags
           ?.map((tagId) => {
             if (!list.tags?.[tagId]) return undefined;
-            return { ...list.tags[tagId], id: tagId };
+            return { ...list?.tags[tagId], id: tagId };
           })
           ?.filter((x): x is TagInfo => Boolean(x)) ?? [];
       const token = new WrappedTokenInfo(tokenInfo, tags);
-      if (tokenMap[token.chainId][token.address] !== undefined) throw Error('Duplicate tokens.');
+      if (tokenMap[token?.chainId][token?.address] !== undefined) throw Error('Duplicate tokens.');
       return {
         ...tokenMap,
-        [token.chainId]: {
-          ...tokenMap[token.chainId],
-          [token.address]: {
+        [token?.chainId]: {
+          ...tokenMap[token?.chainId],
+          [token?.address]: {
             token,
             list: list,
           },
@@ -99,9 +101,9 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
   return {
     1: { ...map1[1], ...map2[1] },
     3: { ...map1[3], ...map2[3] },
-    4: { ...map1[4], ...map2[4] },
     5: { ...map1[5], ...map2[5] },
     42: { ...map1[42], ...map2[42] },
+    1452: { ...map1[1452], ...map2[1452] },
   };
 }
 
