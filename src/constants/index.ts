@@ -20,24 +20,21 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[];
 };
 
-export const DAI = new Token(
+/*
+export const GUD = new Token(
   ChainId.MAINNET,
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  '',
   18,
-  'DAI',
-  'Dai Stablecoin'
+  'GUD',
+  'Gauss Stablecoin'
 );
-export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C');
-export const USDT = new Token(ChainId.MAINNET, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether USD');
-export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound');
-export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2', 18, 'MKR', 'Maker');
-export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
-export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
+*/
+export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stablecoin');
 
 export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stable');
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
-export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
+export const AVERAGE_BLOCK_TIME_IN_SECS = 3;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS;
 export const TIMELOCK_ADDRESS = '0xc06A2A3E8F34dD76945f56068Fc336FBa9FF7628';
@@ -57,7 +54,7 @@ const WETH_ONLY: ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 /**
@@ -65,15 +62,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
  * tokens.
  */
 export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
-  [ChainId.MAINNET]: {
-    [AMPL.address]: [DAI, WETH[ChainId.MAINNET]],
-  },
+  [ChainId.MAINNET]: {},
 };
 
 // used for display in the default list when adding liquidity
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
 };
 
 // used to construct the list of all pairs we consider by default in the frontend
@@ -87,14 +82,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 };
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
-  [ChainId.MAINNET]: [
-    [
-      new Token(ChainId.MAINNET, '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', 8, 'cDAI', 'Compound Dai'),
-      new Token(ChainId.MAINNET, '0x39AA39c021dfbaE8faC545936693aC917d5E7563', 8, 'cUSDC', 'Compound USD Coin'),
-    ],
-    [USDC, USDT],
-    [DAI, USDT],
-  ],
+  [ChainId.GIL]: [[WETH[ChainId.GIL], GUD]],
 };
 
 export interface WalletInfo {
