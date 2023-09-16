@@ -31,6 +31,8 @@ export const GUD = new Token(
 */
 export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stablecoin');
 
+export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stable');
+
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 3;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
@@ -43,7 +45,10 @@ export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
+  [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
   [ChainId.GIL]: [WETH[ChainId.GIL]],
+  [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
+  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
 };
 
 // used to construct intermediary pairs for trading
@@ -69,7 +74,11 @@ export const SUGGESTED_BASES: ChainTokenList = {
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
+  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, WBTC],
+  [ChainId.ROPSTEN]: [...WETH_ONLY[ChainId.ROPSTEN]],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
+  [ChainId.GÖRLI]: [...WETH_ONLY[ChainId.GÖRLI]],
+  [ChainId.KOVAN]: [...WETH_ONLY[ChainId.KOVAN]],
 };
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {

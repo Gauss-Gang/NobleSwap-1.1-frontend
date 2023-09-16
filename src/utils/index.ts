@@ -18,8 +18,11 @@ export function isAddress(value: any): string | false {
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  1777: 'gaussgang',
-  1452: 'giltestnet',
+  1: '',
+  3: 'ropsten.',
+  1452: 'GIL.',
+  5: 'goerli.',
+  42: 'kovan.',
 };
 
 export function getEtherscanLink(
@@ -27,8 +30,12 @@ export function getEtherscanLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
-  const prefix = `https://explorer.${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1452]}.com`;
-
+  let prefix;
+  if (chainId == 1452) {
+    prefix = `https://explorer.giltestnet.com`;
+  } else {
+    prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`;
+  }
   switch (type) {
     case 'transaction': {
       return `${prefix}/tx/${data}`;

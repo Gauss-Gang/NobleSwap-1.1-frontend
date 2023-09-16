@@ -49,6 +49,7 @@ const BodyWrapper = styled.div`
 `;
 
 const NobleImageWrapper = styled.img`
+  z-index: -1;
   position: fixed;
   left: 5%;
   bottom: 5%;

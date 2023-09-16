@@ -242,7 +242,7 @@ export const StyledMenuButton = styled.button`
 `;
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
+  [ChainId.GIL]: 'GIL',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Goerli',
   [ChainId.KOVAN]: 'Kovan',
@@ -293,7 +293,7 @@ export default function Header() {
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
+                {userEthBalance?.toSignificant(4)} GANG
               </BalanceText>
             ) : null}
             <Web3Status />
