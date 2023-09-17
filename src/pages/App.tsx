@@ -19,7 +19,9 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap';
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects';
 import Logo from '../assets/images/logo.png';
+import NobleswapBackground from '../assets/images/nobleswap_bg.png';
 import './globals.css';
+
 
 const AppWrapper = styled.div`
   min-height: 100vh;
@@ -56,6 +58,18 @@ const NobleImageWrapper = styled.img`
   bottom: 5%;
 `;
 
+const NobleswapBackgroundStyled = styled.div`
+  background: url('${() => NobleswapBackground}');
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  inset: 0;
+  z-index: -2;
+`;
+
 export default function App() {
   return (
     <Suspense fallback={null}>
@@ -87,6 +101,7 @@ export default function App() {
             </Switch>
           </Web3ReactManager>
           <NobleImageWrapper src={Logo} />
+          <NobleswapBackgroundStyled />
         </BodyWrapper>
       </AppWrapper>
     </Suspense>

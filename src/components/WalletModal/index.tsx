@@ -200,6 +200,8 @@ export default function WalletModal({
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key];
+      const optionIcon = `/images/${option.iconName}`;
+
       // check for mobile options
       if (isMobile) {
         //disable portis on mobile for now
@@ -220,7 +222,7 @@ export default function WalletModal({
               link={option.href}
               header={option.name}
               subheader={null}
-              icon={require('../../assets/images/' + option.iconName)}
+              icon={optionIcon}
             />
           );
         }
@@ -274,7 +276,8 @@ export default function WalletModal({
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
-            icon={require('../../assets/images/' + option.iconName)}
+            // icon={optionIcon}
+            icon={optionIcon}
           />
         )
       );
