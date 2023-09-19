@@ -22,7 +22,6 @@ import Logo from '../assets/images/logo.png';
 import NobleswapBackground from '../assets/images/nobleswap_bg.png';
 import './globals.css';
 
-
 const AppWrapper = styled.div`
   min-height: 100vh;
   display: flex;
