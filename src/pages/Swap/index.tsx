@@ -237,36 +237,21 @@ export default function Swap() {
   );
 
   const sellOBURN = async () => {
-    // Check if window.ethereum is available
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        // Replace with your smart contract address
-        const contractAddress = '0x...';   
-        // Create a provider
+        const contractAddress = '0x...';
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
         const signer = provider.getSigner();
-        
-        // Initialize contract
         const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
-        
-        // Replace these with the actual values
         const amountOBURN = ethers.utils.parseEther(typedValue.toString());
         const amountBUSD = ethers.utils.parseEther('0');
         const slippage = 1;
-        
-        // Estimate gas
         const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountBUSD, slippage);
-        
-        // Execute the function
         const tx = await BurnSwap.sellOBURN(amountOBURN, amountBUSD, slippage, {
-          gasLimit: gasEstimate
+          gasLimit: gasEstimate,
         });
-        
-        // Wait for transaction to be mined
         const receipt = await tx.wait();
-        
         console.log('Transaction was successful, receipt:', receipt);
-        
       } catch (error) {
         console.log('An error occurred:', error);
       }
@@ -274,36 +259,21 @@ export default function Swap() {
       console.log('No Web3 provider found.');
     }
   };
-
   const buyOBURN = async () => {
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        // Replace with your smart contract address
         const contractAddress = '0x...';
-  
-        // Initialize Ethers providers and signer
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
         const signer = provider.getSigner();
-  
-        // Initialize contract
         const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
-  
-        // Replace these with the actual values
-        const amountOBURN = ethers.utils.parseEther('0'); // Set to zero when you want to buy a specific amount of BUSD
-        const amountBUSD = ethers.utils.parseEther(typedValue.toString()); // The amount of BUSD you want to swap for OBURN
-        const slippage = 1; // Replace with your actual value if needed
-  
-        // Estimate gas
+        const amountOBURN = ethers.utils.parseEther('0');
+        const amountBUSD = ethers.utils.parseEther(typedValue.toString());
+        const slippage = 1;
         const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountBUSD, slippage);
-  
-        // Execute the function
         const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountBUSD, slippage, {
-          gasLimit: gasEstimate
+          gasLimit: gasEstimate,
         });
-  
-        // Wait for transaction to be mined
         const receipt = await tx.wait();
-  
         console.log('Transaction was successful, receipt:', receipt);
       } catch (error) {
         console.log('An error occurred:', error);
@@ -311,7 +281,7 @@ export default function Swap() {
     } else {
       console.log('No Web3 provider found.');
     }
-  };  
+  };
 
   return (
     <>
