@@ -9,8 +9,8 @@ import {
 } from '../connectors';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const FACTORY_ADDRESS = '0xD68BfbaEFb79653B1F63FD25B7ba48Fb81A047E4';
-export const ROUTER_ADDRESS = '0xa4478f8c1eD4913E511543fD0B2a2460E89500EB';
+export const FACTORY_ADDRESS = '0x81b1e14928CE9454EF176bA82fFC6EE2F3be9238';
+export const ROUTER_ADDRESS = '0xd6c8F40AD9c78b3BdcDB4c083903A21CF97467a1';
 
 export const LP_TOKEN_NAME = 'Noble-LP-Token';
 export const LP_TOKEN_SYMBOL = 'NOBLE-LP';
@@ -35,7 +35,9 @@ export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
 
 // @TODO Austin - Fix this so it has the correct values
-// export const GUD = new Token(ChainId.MAINNET, '0x63C4CDE2517ed41CC7A4CC12A1CbdB5D4188D4D1', 8, 'GUD', 'GUD');
+// export const GUD = new Token(ChainId.GAUSS, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
+
+export const GUD = new Token(ChainId.GIL, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13;

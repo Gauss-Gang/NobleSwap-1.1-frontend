@@ -38,6 +38,8 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody';
 import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
+import { ethers } from 'ethers';
+import contractABI from './BurnSwapABI.json';
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -234,6 +236,53 @@ export default function Swap() {
     [onCurrencySelection]
   );
 
+  const sellOBURN = async () => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      try {
+        const contractAddress = '0x...';
+        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+        const signer = provider.getSigner();
+        const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
+        const amountOBURN = ethers.utils.parseEther(typedValue.toString());
+        const amountBUSD = ethers.utils.parseEther('0');
+        const slippage = 1;
+        const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountBUSD, slippage);
+        const tx = await BurnSwap.sellOBURN(amountOBURN, amountBUSD, slippage, {
+          gasLimit: gasEstimate,
+        });
+        const receipt = await tx.wait();
+        console.log('Transaction was successful, receipt:', receipt);
+      } catch (error) {
+        console.log('An error occurred:', error);
+      }
+    } else {
+      console.log('No Web3 provider found.');
+    }
+  };
+  const buyOBURN = async () => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      try {
+        const contractAddress = '0x...';
+        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+        const signer = provider.getSigner();
+        const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
+        const amountOBURN = ethers.utils.parseEther('0');
+        const amountBUSD = ethers.utils.parseEther(typedValue.toString());
+        const slippage = 1;
+        const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountBUSD, slippage);
+        const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountBUSD, slippage, {
+          gasLimit: gasEstimate,
+        });
+        const receipt = await tx.wait();
+        console.log('Transaction was successful, receipt:', receipt);
+      } catch (error) {
+        console.log('An error occurred:', error);
+      }
+    } else {
+      console.log('No Web3 provider found.');
+    }
+  };
+
   return (
     <>
       <TokenWarningModal
@@ -376,9 +425,13 @@ export default function Swap() {
                   )}
                 </ButtonConfirmed>
                 <ButtonError
-                  onClick={() => {
+                  onClick={async () => {
                     if (isExpertMode) {
                       handleSwap();
+                    } else if (currencies.INPUT?.symbol === 'OBURN') {
+                      await sellOBURN();
+                    } else if (currencies.OUTPUT?.symbol === 'OBURN') {
+                      await buyOBURN();
                     } else {
                       setSwapState({
                         tradeToConfirm: trade,
