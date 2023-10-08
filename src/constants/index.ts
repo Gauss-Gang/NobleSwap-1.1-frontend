@@ -34,7 +34,10 @@ export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
 
-export const GUD = new Token(ChainId.GIL, '0xB1E82Eb59F4160ee23b3F2C91cafC402Ea32BEB8', 18, 'GUD', 'Gauss Stable');
+// @TODO Austin - Fix this so it has the correct values
+// export const GUD = new Token(ChainId.GAUSS, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
+
+export const GUD = new Token(ChainId.GIL, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
@@ -58,7 +61,7 @@ const WETH_ONLY: ChainTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
-  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
 };
 
 /**
@@ -82,7 +85,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [...WETH_ONLY[ChainId.ROPSTEN]],
-  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
   [ChainId.GÖRLI]: [...WETH_ONLY[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [...WETH_ONLY[ChainId.KOVAN]],
 };
@@ -198,3 +201,4 @@ export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000));
 export const ZERO_PERCENT = new Percent('0');
 export const ONE_HUNDRED_PERCENT = new Percent('1');
+export const AMOUNT_TO_APPROVE = (10000000000 * 10 ** 18).toString();

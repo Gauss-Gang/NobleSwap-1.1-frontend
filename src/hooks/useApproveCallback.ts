@@ -2,7 +2,7 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { TransactionResponse } from '@ethersproject/providers';
 import { Trade, TokenAmount, CurrencyAmount, ETHER } from '@uniswap/sdk';
 import { useCallback, useMemo } from 'react';
-import { ROUTER_ADDRESS } from '../constants';
+import { AMOUNT_TO_APPROVE, ROUTER_ADDRESS } from '../constants';
 import { useTokenAllowance } from '../data/Allowances';
 import { Field } from '../state/swap/actions';
 import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks';
@@ -79,7 +79,7 @@ export function useApproveCallback(
     });
 
     return tokenContract
-      .approve(spender, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+      .approve(spender, useExact ? amountToApprove.raw.toString() : AMOUNT_TO_APPROVE, {
         gasLimit: calculateGasMargin(estimatedGas),
       })
       .then((response: TransactionResponse) => {
