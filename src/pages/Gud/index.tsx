@@ -307,7 +307,7 @@ export default function Gud() {
                   )}
                   <RowBetween align="center">
                     <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
-                      Slippage Tolerance
+                      Bridging Fee
                     </ClickableText>
                     <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
                       {allowedSlippage / 100}%
