@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 import { useCurrencyBalance } from '../../state/wallet/hooks';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
-import CurrencyLogo from '../CurrencyLogo';
+import CurrencyLogo, { CurrencyLogoGud } from '../CurrencyLogo';
 import DoubleCurrencyLogo from '../DoubleLogo';
 import { RowBetween } from '../Row';
 import { TYPE } from '../../theme';
@@ -41,6 +41,22 @@ const CurrencySelect = styled.button`
   :hover {
     background-color: ${({ theme }) => darken(0.1, theme.bg3)};
   }
+`;
+
+const CurrencySelectGud = styled.button`
+  align-items: center;
+  height: 2.2rem;
+  font-size: 20px;
+  font-weight: 500;
+  border: none;
+  background-color: ${({ theme }) => theme.bg3};
+  color: ${({ theme }) => theme.text1};
+  border-radius: 12px;
+  outline: none;
+  user-select: none;
+  border: none;
+  padding: 0 0.5rem;
+  transition: 0.2s;
 `;
 
 const LabelRow = styled.div`
@@ -243,6 +259,114 @@ export default function CurrencyInputPanel({
           showCommonBases={showCommonBases}
         />
       )}
+    </InputPanel>
+  );
+}
+export function CurrencyInputPanelGud({
+  value,
+  onUserInput,
+  onMax,
+  showMaxButton,
+  label = 'Input',
+  onCurrencySelect,
+  currency,
+  disableCurrencySelect = false,
+  hideBalance = false,
+  pair = null, // used for double token logo
+  hideInput = false,
+  otherCurrency,
+  id,
+  showCommonBases,
+  customBalanceText,
+}: CurrencyInputPanelProps) {
+  const { t } = useTranslation();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const { account } = useActiveWeb3React();
+  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+  const theme = useTheme();
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  return (
+    <InputPanel id={id}>
+      <Container hideInput={hideInput}>
+        {!hideInput && (
+          <LabelRow>
+            <RowBetween>
+              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+              {account && (
+                <TYPE.body
+                  onClick={onMax}
+                  color={theme.text2}
+                  fontWeight={500}
+                  fontSize={14}
+                  style={{ display: 'inline', cursor: 'pointer' }}
+                >
+                  {!hideBalance && !!currency && selectedCurrencyBalance
+                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                    : ' -'}
+                </TYPE.body>
+              )}
+            </RowBetween>
+          </LabelRow>
+        )}
+        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+          {!hideInput && (
+            <>
+              <NumericalInput
+                className="token-amount-input"
+                value={value}
+                onUserInput={(val) => {
+                  onUserInput(val);
+                }}
+              />
+              {account && currency && showMaxButton && label !== 'To' && (
+                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+              )}
+            </>
+          )}
+          <CurrencySelectGud
+            className="open-currency-select-button"
+            // onClick={() => {
+            //   if (!disableCurrencySelect) {
+            //     setModalOpen(true);
+            //   }
+            // }}
+          >
+            <Aligner>
+              {pair ? (
+                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+              ) : currency ? (
+                <CurrencyLogoGud currency={currency} size={'24px'} />
+              ) : null}
+              {pair ? (
+                <StyledTokenName className="pair-name-container">
+                  {pair?.token0.symbol}:{pair?.token1.symbol}
+                </StyledTokenName>
+              ) : (
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                  USDC
+                </StyledTokenName>
+              )}
+            </Aligner>
+          </CurrencySelectGud>
+        </InputRow>
+      </Container>
+      {/* {!disableCurrencySelect && onCurrencySelect && (
+        <CurrencySearchModal
+          isOpen={modalOpen}
+          onDismiss={handleDismissSearch}
+          onCurrencySelect={onCurrencySelect}
+          selectedCurrency={currency}
+          otherSelectedCurrency={otherCurrency}
+          showCommonBases={showCommonBases}
+        />
+      )} */}
     </InputPanel>
   );
 }

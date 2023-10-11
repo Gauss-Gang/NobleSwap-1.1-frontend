@@ -281,6 +281,9 @@ export default function Header() {
         >
           {t('pool')}
         </StyledNavLink>
+        <StyledNavLink id={`gud-nav-link`} to={'/gud'}>
+          {t('GUD')}
+        </StyledNavLink>
       </HeaderLinks>
 
       <HeaderControls>
