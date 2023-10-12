@@ -25,12 +25,7 @@ import { useSwapCallback } from '../../hooks/useSwapCallback';
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback';
 import { useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks';
 import { Field } from '../../state/swap/actions';
-import {
-  useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
-  useSwapActionHandlers,
-  useSwapState,
-} from '../../state/swap/hooks';
+import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks';
 import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks';
 import { LinkStyledButton, TYPE } from '../../theme';
 import { maxAmountSpend } from '../../utils/maxAmountSpend';
@@ -39,7 +34,7 @@ import AppBody from '../AppBody';
 import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
 import { ethers } from 'ethers';
-import contractABI from './BurnSwapABI.json';
+import burnSwapABI from './BurnSwapABI.json';
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -239,15 +234,15 @@ export default function Swap() {
   const sellOBURN = async () => {
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        const contractAddress = '0x...';
+        const contractAddress = '0xF8E29457B81FE49BE488DC18960774D47c68B3BE';
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
         const signer = provider.getSigner();
-        const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
+        const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
         const amountOBURN = ethers.utils.parseEther(typedValue.toString());
-        const amountBUSD = ethers.utils.parseEther('0');
-        const slippage = 1;
-        const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountBUSD, slippage);
-        const tx = await BurnSwap.sellOBURN(amountOBURN, amountBUSD, slippage, {
+        const amountGUD = ethers.utils.parseEther('0');
+        const slippage = 11;
+        const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountGUD, slippage);
+        const tx = await BurnSwap.sellOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
         const receipt = await tx.wait();
@@ -265,12 +260,12 @@ export default function Swap() {
         const contractAddress = '0x...';
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
         const signer = provider.getSigner();
-        const BurnSwap = new ethers.Contract(contractAddress, contractABI, signer);
+        const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
         const amountOBURN = ethers.utils.parseEther('0');
-        const amountBUSD = ethers.utils.parseEther(typedValue.toString());
+        const amountGUD = ethers.utils.parseEther(typedValue.toString());
         const slippage = 1;
-        const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountBUSD, slippage);
-        const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountBUSD, slippage, {
+        const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountGUD, slippage);
+        const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
         const receipt = await tx.wait();
