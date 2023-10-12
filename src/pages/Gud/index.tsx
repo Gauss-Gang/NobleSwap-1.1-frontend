@@ -1,4 +1,5 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk';
+/* prettier-ignore */
+import { ChainId, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ArrowDown } from 'react-feather';
 import { Text } from 'rebass';
@@ -8,7 +9,7 @@ import { ButtonError, ButtonPrimary, ButtonConfirmed, ButtonSlanted } from '../.
 import Card, { GreyCard } from '../../components/Card';
 import Column, { AutoColumn } from '../../components/Column';
 import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal';
-import CurrencyInputPanel, { CurrencyInputPanelGud } from '../../components/CurrencyInputPanel';
+import { CurrencyInputPanelGud } from '../../components/CurrencyInputPanel';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import { AutoRow, RowBetween } from '../../components/Row';
 import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee';
@@ -16,7 +17,7 @@ import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../
 import TradePrice from '../../components/swap/TradePrice';
 import TokenWarningModal from '../../components/TokenWarningModal';
 import ProgressSteps from '../../components/ProgressSteps';
-import SwapHeader, { GudHeader } from '../../components/swap/SwapHeader';
+import { GudHeader } from '../../components/swap/SwapHeader';
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown';
 import { useActiveWeb3React } from '../../hooks';
 import { useCurrency, useAllTokens } from '../../hooks/Tokens';
@@ -38,11 +39,109 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import AppBody from '../AppBody';
 import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
+import { useLocation } from 'react-router-dom';
+import { useWeb3React } from '@web3-react/core';
+import { Contract } from 'ethers';
+import { parseUnits } from '@ethersproject/units';
+
+const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+      {
+        name: '_spender',
+        type: 'address',
+      },
+    ],
+    name: 'allowance',
+    outputs: [
+      {
+        name: 'remaining',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'approve',
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+const TRANSFER_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_recipient',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amountIn',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: '_source',
+        type: 'address',
+      },
+      {
+        internalType: 'bool',
+        name: '_express',
+        type: 'bool',
+      },
+    ],
+    name: 'transfer',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_txId',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+];
+
+const TOKEN_ADDRESS = '0x607D772B71FF8480a6A0D9b148D951AEdc990769';
+const SPENDER_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
+const CONTRACT_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
 
 export default function Gud() {
   const loadedUrlParams = useDefaultsFromURLSearch();
 
   const [expressMode, setExpressMode] = useState<boolean>(false);
+  const [allowance, setAllowance] = useState<string>('0');
+  const [balance, setBalance] = useState('0');
+  const location = useLocation();
+  const { chainId, library } = useWeb3React();
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -228,15 +327,107 @@ export default function Gud() {
   );
 
   const handleMaxInput = useCallback(() => {
-    maxAmountInput && onUserInput(Field.INPUT, maxAmountInput.toExact());
-  }, [maxAmountInput, onUserInput]);
+    onUserInput(Field.INPUT, Number(balance));
+  }, [Number(balance), onUserInput]);
 
   const handleOutputSelect = useCallback(
     (outputCurrency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
     [onCurrencySelection]
   );
 
-  console.log('expressMode', expressMode);
+  const handleApprove = async () => {
+    if (!library || !account) return;
+    const tokenContract = new Contract(TOKEN_ADDRESS, ERC20_ABI, library.getSigner(account));
+    try {
+      // Convert the amount to wei format
+      const amountInWei = parseUnits(formattedAmounts[Field.INPUT], 6); // adjust 18 if your token has a different number of decimals
+      const tx = await tokenContract.approve(SPENDER_ADDRESS, amountInWei);
+      console.log('Approval transaction:', tx);
+      await tx.wait(); // waits for the transaction to be mined
+      console.log('Transaction has been mined!');
+    } catch (err) {
+      console.error('Approval error:', err);
+    }
+  };
+
+  async function handleBridge() {
+    const contract = new Contract(CONTRACT_ADDRESS, TRANSFER_ABI, library!.getSigner());
+    const formattedAmount = parseUnits(formattedAmounts[Field.INPUT], 6);
+    console.log('Formatted amount:', formattedAmount);
+    if (account) {
+      try {
+        const tx = await contract.transfer(account, formattedAmount, account, true); // Assuming express mode is true
+        const receipt = await tx.wait();
+        console.log('Transfer transaction receipt:', receipt);
+      } catch (error) {
+        console.error('Error during transfer:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Check if the user is on the /gud page
+    if (location.pathname === '/gud') {
+      // If they are not on POLYGON or MUMBAI
+      if (chainId !== ChainId.MUMBAI) {
+        // Inform the user to switch networks
+        alert('Please switch to Mumbai network to access this page.');
+
+        // Optional: If you have permissions, you can programmatically switch the network for the user
+        if (library && library.provider.request) {
+          library.provider
+            .request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+            })
+            .catch((switchError) => {
+              if (switchError.code === 4902) {
+                // add the network
+                library.provider
+                  .request({
+                    method: 'wallet_addEthereumChain',
+                    params: [
+                      {
+                        chainId: `0x${ChainId.MUMBAI.toString(16)}`,
+                        chainName: 'Mumbai',
+                        nativeCurrency: {
+                          name: 'Matic',
+                          symbol: 'MATIC',
+                          decimals: 18,
+                        },
+                        rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+                        blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+                      },
+                    ],
+                  })
+                  .catch((addError) => {
+                    console.error(addError);
+                  });
+              } else {
+                console.error(switchError);
+              }
+            });
+        }
+      }
+    }
+  }, [location.pathname, chainId, library]);
+
+  useEffect(() => {
+    if (account && library) {
+      const tokenContract = new Contract('0x607D772B71FF8480a6A0D9b148D951AEdc990769', ERC20_ABI, library);
+
+      const fetchAllowance = async () => {
+        try {
+          const result = await tokenContract.allowance(account, '0x771a7B1148420590774c5692F34cce3dC22e84f5');
+          setAllowance(result.toString());
+        } catch (err) {
+          console.error('Error fetching allowance:', err);
+        }
+      };
+
+      fetchAllowance();
+    }
+  }, [account, library, formattedAmounts[Field.INPUT]]);
 
   return (
     <>
@@ -265,12 +456,14 @@ export default function Gud() {
 
           <AutoColumn gap={'md'}>
             <CurrencyInputPanelGud
-              label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
+              label={'Input value:'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onMax={handleMaxInput}
+              balance={balance}
+              setBalance={setBalance}
               onCurrencySelect={handleInputSelect}
               otherCurrency={currencies[Field.OUTPUT]}
               id="swap-currency-input"
@@ -306,10 +499,12 @@ export default function Gud() {
                     </RowBetween>
                   )}
                   <RowBetween align="center">
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
+                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                      {/* onClick={toggleSettings}^ */}
                       Bridging Fee
                     </ClickableText>
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2} onClick={toggleSettings}>
+                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
+                      {/* onClick={toggleSettings}^ */}
                       {allowedSlippage / 100}%
                     </ClickableText>
                   </RowBetween>
@@ -321,90 +516,14 @@ export default function Gud() {
           <BottomGrouping>
             {!account ? (
               <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
-            ) : showWrap ? (
-              <ButtonPrimary disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                {wrapInputError ??
-                  (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-              </ButtonPrimary>
-            ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: 'center' }}>
-                <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
-                {singleHopOnly && <TYPE.main mb="4px">Try enabling multi-hop trades.</TYPE.main>}
-              </GreyCard>
-            ) : showApproveFlow ? (
-              <RowBetween>
-                <ButtonConfirmed
-                  onClick={approveCallback}
-                  disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                  width="48%"
-                  altDisabledStyle={approval === ApprovalState.PENDING} // show solid button while waiting
-                  confirmed={approval === ApprovalState.APPROVED}
-                >
-                  {approval === ApprovalState.PENDING ? (
-                    <AutoRow gap="6px" justify="center">
-                      Approving <Loader stroke="white" />
-                    </AutoRow>
-                  ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                    'Approved'
-                  ) : (
-                    'Approve ' + currencies[Field.INPUT]?.symbol
-                  )}
-                </ButtonConfirmed>
-                <ButtonError
-                  onClick={async () => {
-                    if (isExpertMode) {
-                      handleSwap();
-                    } else {
-                      setSwapState({
-                        tradeToConfirm: trade,
-                        attemptingTxn: false,
-                        swapErrorMessage: undefined,
-                        showConfirm: true,
-                        txHash: undefined,
-                      });
-                    }
-                  }}
-                  width="48%"
-                  id="swap-button"
-                  disabled={
-                    !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                  }
-                  error={isValid && priceImpactSeverity > 2}
-                >
-                  <Text fontSize={16} fontWeight={500}>
-                    {priceImpactSeverity > 3 && !isExpertMode
-                      ? `Price Impact High`
-                      : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                  </Text>
-                </ButtonError>
-              </RowBetween>
+            ) : chainId !== ChainId.MUMBAI ? (
+              <ButtonError>Please switch to the Mumbai network</ButtonError>
+            ) : formattedAmounts[Field.INPUT] === '' ? (
+              <ButtonError disabled>Please enter valid amount</ButtonError>
+            ) : formattedAmounts[Field.INPUT] > allowance ? (
+              <ButtonSlanted onClick={() => handleApprove()}>Approve</ButtonSlanted>
             ) : (
-              <ButtonError
-                onClick={() => {
-                  if (isExpertMode) {
-                    handleSwap();
-                  } else {
-                    setSwapState({
-                      tradeToConfirm: trade,
-                      attemptingTxn: false,
-                      swapErrorMessage: undefined,
-                      showConfirm: true,
-                      txHash: undefined,
-                    });
-                  }
-                }}
-                id="swap-button"
-                disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                error={isValid && priceImpactSeverity > 2 && !swapCallbackError}
-              >
-                <Text fontSize={20} fontWeight={500}>
-                  {swapInputError
-                    ? swapInputError
-                    : priceImpactSeverity > 3 && !isExpertMode
-                    ? `Price Impact Too High`
-                    : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                </Text>
-              </ButtonError>
+              <ButtonSlanted onClick={() => handleBridge()}>Bridge</ButtonSlanted>
             )}
             {showApproveFlow && (
               <Column style={{ marginTop: '1rem' }}>

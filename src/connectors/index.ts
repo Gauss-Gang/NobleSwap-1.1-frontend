@@ -25,8 +25,14 @@ export function getNetworkLibrary(): Web3Provider {
   return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any));
 }
 
+// const pathname = window.location.pathname;
+
+// const supportedChainIds = pathname === '/gud' ? [137, 80001] : [1452];
+
+// export const injected = new InjectedConnector({ supportedChainIds });
+// original
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 1452],
+  supportedChainIds: [1, 1452, 137, 80001],
 });
 
 // mainnet only

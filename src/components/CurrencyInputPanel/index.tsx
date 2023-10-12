@@ -1,5 +1,5 @@
 import { Currency, Pair } from '@uniswap/sdk';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { useCurrencyBalance } from '../../state/wallet/hooks';
@@ -14,6 +14,31 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg';
 import { useActiveWeb3React } from '../../hooks';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../../hooks/useTheme';
+import { useWeb3React } from '@web3-react/core';
+import { Contract } from 'ethers';
+import { formatUnits } from '@ethersproject/units';
+
+const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -262,14 +287,15 @@ export default function CurrencyInputPanel({
     </InputPanel>
   );
 }
+/* eslint-disable react/prop-types */
 export function CurrencyInputPanelGud({
   value,
   onUserInput,
   onMax,
   showMaxButton,
-  label = 'Input',
+  label,
   onCurrencySelect,
-  currency,
+  currency = '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
   disableCurrencySelect = false,
   hideBalance = false,
   pair = null, // used for double token logo
@@ -278,10 +304,13 @@ export function CurrencyInputPanelGud({
   id,
   showCommonBases,
   customBalanceText,
+  balance,
+  setBalance,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation();
 
   const [modalOpen, setModalOpen] = useState(false);
+  const { library } = useWeb3React<Web3Provider>();
   const { account } = useActiveWeb3React();
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
   const theme = useTheme();
@@ -289,6 +318,24 @@ export function CurrencyInputPanelGud({
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false);
   }, [setModalOpen]);
+
+  useEffect(() => {
+    if (account && library) {
+      const tokenContract = new Contract('0x607D772B71FF8480a6A0D9b148D951AEdc990769', ERC20_ABI, library);
+
+      const fetchBalance = async () => {
+        try {
+          const result = await tokenContract.balanceOf(account);
+          const formattedResult = formatUnits(result, 6); // Assuming your token has 18 decimals, adjust if different
+          setBalance(formattedResult);
+        } catch (err) {
+          console.error('Error fetching balance:', err);
+        }
+      };
+
+      fetchBalance();
+    }
+  }, [account, library, value]);
 
   return (
     <InputPanel id={id}>
@@ -307,9 +354,10 @@ export function CurrencyInputPanelGud({
                   fontSize={14}
                   style={{ display: 'inline', cursor: 'pointer' }}
                 >
-                  {!hideBalance && !!currency && selectedCurrencyBalance
+                  Balance: {balance}
+                  {/* {
                     ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
-                    : ' -'}
+                    : ' -'} */}
                 </TYPE.body>
               )}
             </RowBetween>
