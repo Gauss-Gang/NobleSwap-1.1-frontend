@@ -201,4 +201,5 @@ export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000));
 export const ZERO_PERCENT = new Percent('0');
 export const ONE_HUNDRED_PERCENT = new Percent('1');
-export const AMOUNT_TO_APPROVE = (10000000000 * 10 ** 18).toString();
+// export const AMOUNT_TO_APPROVE = (10000000000 * 10 ** 18).toString(); // original
+export const AMOUNT_TO_APPROVE = '10000000000000000000000000000';
