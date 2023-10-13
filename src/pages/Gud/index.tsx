@@ -371,7 +371,7 @@ export default function Gud() {
       // If they are not on POLYGON or MUMBAI
       if (chainId !== ChainId.MUMBAI) {
         // Inform the user to switch networks
-        alert('Please switch to Mumbai network to access this page.');
+        alert('Please switch to Polygon Mumbai network to access this page.');
 
         // Optional: If you have permissions, you can programmatically switch the network for the user
         if (library && library.provider.request) {
@@ -517,7 +517,46 @@ export default function Gud() {
             {!account ? (
               <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
             ) : chainId !== ChainId.MUMBAI ? (
-              <ButtonError>Please switch to the Mumbai network</ButtonError>
+              <ButtonError
+                onClick={() => {
+                  if (library && library.provider.request) {
+                    library.provider
+                      .request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                      })
+                      .catch((switchError) => {
+                        if (switchError.code === 4902) {
+                          // add the network
+                          library.provider
+                            .request({
+                              method: 'wallet_addEthereumChain',
+                              params: [
+                                {
+                                  chainId: `0x${ChainId.MUMBAI.toString(16)}`,
+                                  chainName: 'Mumbai',
+                                  nativeCurrency: {
+                                    name: 'Matic',
+                                    symbol: 'MATIC',
+                                    decimals: 18,
+                                  },
+                                  rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+                                  blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+                                },
+                              ],
+                            })
+                            .catch((addError) => {
+                              console.error(addError);
+                            });
+                        } else {
+                          console.error(switchError);
+                        }
+                      });
+                  }
+                }}
+              >
+                Please switch to Polygon Mumbai network
+              </ButtonError>
             ) : formattedAmounts[Field.INPUT] === '' ? (
               <ButtonError disabled>Please enter valid amount</ButtonError>
             ) : formattedAmounts[Field.INPUT] > allowance ? (
