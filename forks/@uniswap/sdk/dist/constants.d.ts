@@ -6,6 +6,7 @@ export declare enum ChainId {
     GIL = 1452,
     POLYGON = 137,
     MUMBAI = 80001,
+    GAUSS = 1777,
     GÖRLI = 5,
     KOVAN = 42
 }

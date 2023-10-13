@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { useCurrencyBalance } from '../../state/wallet/hooks';
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
+import CurrencySearchModal, { CurrencySearchModalGUD } from '../SearchModal/CurrencySearchModal';
 import CurrencyLogo, { CurrencyLogoGud } from '../CurrencyLogo';
 import DoubleCurrencyLogo from '../DoubleLogo';
 import { RowBetween } from '../Row';
@@ -78,10 +78,16 @@ const CurrencySelectGud = styled.button`
   color: ${({ theme }) => theme.text1};
   border-radius: 12px;
   outline: none;
+  cursor: pointer;
   user-select: none;
   border: none;
   padding: 0 0.5rem;
   transition: 0.2s;
+
+  :focus,
+  :hover {
+    background-color: ${({ theme }) => darken(0.1, theme.bg3)};
+  }
 `;
 
 const LabelRow = styled.div`
@@ -306,6 +312,8 @@ export function CurrencyInputPanelGud({
   customBalanceText,
   balance,
   setBalance,
+  setToken,
+  token,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation();
 
@@ -321,7 +329,7 @@ export function CurrencyInputPanelGud({
 
   useEffect(() => {
     if (account && library) {
-      const tokenContract = new Contract('0x607D772B71FF8480a6A0D9b148D951AEdc990769', ERC20_ABI, library);
+      const tokenContract = new Contract(token.address, ERC20_ABI, library);
 
       const fetchBalance = async () => {
         try {
@@ -380,11 +388,11 @@ export function CurrencyInputPanelGud({
           )}
           <CurrencySelectGud
             className="open-currency-select-button"
-            // onClick={() => {
-            //   if (!disableCurrencySelect) {
-            //     setModalOpen(true);
-            //   }
-            // }}
+            onClick={() => {
+              if (!disableCurrencySelect) {
+                setModalOpen(true);
+              }
+            }}
           >
             <Aligner>
               {pair ? (
@@ -398,23 +406,25 @@ export function CurrencyInputPanelGud({
                 </StyledTokenName>
               ) : (
                 <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                  USDC
+                  {token.symbol}
                 </StyledTokenName>
               )}
+              {!disableCurrencySelect && <StyledDropDown />}
             </Aligner>
           </CurrencySelectGud>
         </InputRow>
       </Container>
-      {/* {!disableCurrencySelect && onCurrencySelect && (
-        <CurrencySearchModal
+      {!disableCurrencySelect && onCurrencySelect && (
+        <CurrencySearchModalGUD
           isOpen={modalOpen}
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}
           selectedCurrency={currency}
           otherSelectedCurrency={otherCurrency}
           showCommonBases={showCommonBases}
+          setToken={setToken}
         />
-      )} */}
+      )}
     </InputPanel>
   );
 }

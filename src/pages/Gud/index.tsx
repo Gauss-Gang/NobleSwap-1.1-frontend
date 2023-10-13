@@ -130,14 +130,19 @@ const TRANSFER_ABI = [
   },
 ];
 
-const TOKEN_ADDRESS = '0x607D772B71FF8480a6A0D9b148D951AEdc990769';
-const SPENDER_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
-const CONTRACT_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
+const USDC_ADDRESS = '0x607D772B71FF8480a6A0D9b148D951AEdc990769';
+const BRIDGE_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
 
 export default function Gud() {
   const loadedUrlParams = useDefaultsFromURLSearch();
 
   const [expressMode, setExpressMode] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [approveDone, setApproveDone] = useState<boolean>(false);
+  const [token, setToken] = useState({
+    symbol: 'USDC',
+    address: '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
+  });
   const [allowance, setAllowance] = useState<string>('0');
   const [balance, setBalance] = useState('0');
   const location = useLocation();
@@ -337,88 +342,143 @@ export default function Gud() {
 
   const handleApprove = async () => {
     if (!library || !account) return;
-    const tokenContract = new Contract(TOKEN_ADDRESS, ERC20_ABI, library.getSigner(account));
+    setLoading(true);
+    const tokenContract = new Contract(token.address, ERC20_ABI, library.getSigner(account));
     try {
       // Convert the amount to wei format
       const amountInWei = parseUnits(formattedAmounts[Field.INPUT], 6); // adjust 18 if your token has a different number of decimals
-      const tx = await tokenContract.approve(SPENDER_ADDRESS, amountInWei);
+      const tx = await tokenContract.approve(BRIDGE_ADDRESS, amountInWei);
       console.log('Approval transaction:', tx);
       await tx.wait(); // waits for the transaction to be mined
+      setApproveDone(true);
       console.log('Transaction has been mined!');
     } catch (err) {
       console.error('Approval error:', err);
     }
+    setLoading(false);
   };
 
   async function handleBridge() {
-    const contract = new Contract(CONTRACT_ADDRESS, TRANSFER_ABI, library!.getSigner());
+    if (!library || !account) return;
+    setLoading(true);
+    const contract = new Contract(BRIDGE_ADDRESS, TRANSFER_ABI, library!.getSigner());
     const formattedAmount = parseUnits(formattedAmounts[Field.INPUT], 6);
     console.log('Formatted amount:', formattedAmount);
     if (account) {
       try {
-        const tx = await contract.transfer(account, formattedAmount, account, true); // Assuming express mode is true
+        const tx = await contract.transfer(account, formattedAmount, account, expressMode); // Assuming express mode is true
         const receipt = await tx.wait();
+        setApproveDone(false);
         console.log('Transfer transaction receipt:', receipt);
       } catch (error) {
         console.error('Error during transfer:', error);
       }
     }
+    setLoading(false);
   }
+
+  useEffect(() => {
+    allowance <= formattedAmounts[Field.INPUT] ? setApproveDone(false) : setApproveDone(true);
+  }, [allowance, formattedAmounts[Field.INPUT]]);
 
   useEffect(() => {
     // Check if the user is on the /gud page
     if (location.pathname === '/gud') {
-      // If they are not on POLYGON or MUMBAI
-      if (chainId !== ChainId.MUMBAI) {
-        // Inform the user to switch networks
-        alert('Please switch to Polygon Mumbai network to access this page.');
+      if (token.symbol === 'USDC') {
+        // If they are not on POLYGON or MUMBAI
+        if (chainId !== ChainId.MUMBAI) {
+          // Inform the user to switch networks
+          alert('Please switch to Polygon Mumbai network to access this page.');
 
-        // Optional: If you have permissions, you can programmatically switch the network for the user
-        if (library && library.provider.request) {
-          library.provider
-            .request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
-            })
-            .catch((switchError) => {
-              if (switchError.code === 4902) {
-                // add the network
-                library.provider
-                  .request({
-                    method: 'wallet_addEthereumChain',
-                    params: [
-                      {
-                        chainId: `0x${ChainId.MUMBAI.toString(16)}`,
-                        chainName: 'Mumbai',
-                        nativeCurrency: {
-                          name: 'Matic',
-                          symbol: 'MATIC',
-                          decimals: 18,
+          // Optional: If you have permissions, you can programmatically switch the network for the user
+          if (library && library.provider.request) {
+            library.provider
+              .request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+              })
+              .catch((switchError) => {
+                if (switchError.code === 4902) {
+                  // add the network
+                  library.provider
+                    .request({
+                      method: 'wallet_addEthereumChain',
+                      params: [
+                        {
+                          chainId: `0x${ChainId.MUMBAI.toString(16)}`,
+                          chainName: 'Mumbai',
+                          nativeCurrency: {
+                            name: 'Matic',
+                            symbol: 'MATIC',
+                            decimals: 18,
+                          },
+                          rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+                          blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
                         },
-                        rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-                        blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
-                      },
-                    ],
-                  })
-                  .catch((addError) => {
-                    console.error(addError);
-                  });
-              } else {
-                console.error(switchError);
-              }
-            });
+                      ],
+                    })
+                    .catch((addError) => {
+                      console.error(addError);
+                    });
+                } else {
+                  console.error(switchError);
+                }
+              });
+          }
+        }
+      } else if (token.symbol === 'GUD') {
+        // If they are not on GIL
+        if (chainId !== ChainId.GIL) {
+          // Inform the user to switch networks
+          alert('Please switch to Gauss Induction Labs network to access this page.');
+
+          // Optional: If you have permissions, you can programmatically switch the network for the user
+          if (library && library.provider.request) {
+            library.provider
+              .request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: `0x${ChainId.GIL.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+              })
+              .catch((switchError) => {
+                if (switchError.code === 4902) {
+                  // add the network
+                  library.provider
+                    .request({
+                      method: 'wallet_addEthereumChain',
+                      params: [
+                        {
+                          chainId: `0x${ChainId.GIL.toString(16)}`,
+                          chainName: 'Gauss Induction Labs',
+                          nativeCurrency: {
+                            name: 'GANG',
+                            symbol: 'GANG',
+                            decimals: 18,
+                          },
+                          rpcUrls: ['https://rpc.giltestnet.com/'],
+                          blockExplorerUrls: ['https://explorer.giltestnet.com/'],
+                        },
+                      ],
+                    })
+                    .catch((addError) => {
+                      console.error(addError);
+                    });
+                } else {
+                  console.error(switchError);
+                }
+              });
+          }
         }
       }
     }
-  }, [location.pathname, chainId, library]);
+  }, [location.pathname, chainId, library, token]);
 
   useEffect(() => {
     if (account && library) {
-      const tokenContract = new Contract('0x607D772B71FF8480a6A0D9b148D951AEdc990769', ERC20_ABI, library);
+      const tokenContract = new Contract(USDC_ADDRESS, ERC20_ABI, library);
 
       const fetchAllowance = async () => {
         try {
-          const result = await tokenContract.allowance(account, '0x771a7B1148420590774c5692F34cce3dC22e84f5');
+          const result = await tokenContract.allowance(account, BRIDGE_ADDRESS);
           setAllowance(result.toString());
         } catch (err) {
           console.error('Error fetching allowance:', err);
@@ -463,6 +523,8 @@ export default function Gud() {
               onUserInput={handleTypeInput}
               onMax={handleMaxInput}
               balance={balance}
+              setToken={setToken}
+              token={token}
               setBalance={setBalance}
               onCurrencySelect={handleInputSelect}
               otherCurrency={currencies[Field.OUTPUT]}
@@ -483,10 +545,10 @@ export default function Gud() {
               </>
             ) : null}
 
-            {showWrap ? null : (
+            {/* {showWrap ? null : (
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
-                <AutoColumn gap="8px" style={{ padding: '3px 4px' }}>
-                  {Boolean(trade) && (
+                <AutoColumn gap="8px" style={{ padding: '3px 4px' }}> */}
+            {/* {Boolean(trade) && (
                     <RowBetween align="center">
                       <Text fontWeight={500} fontSize={14} color={theme.text2}>
                         Price
@@ -497,26 +559,26 @@ export default function Gud() {
                         setShowInverted={setShowInverted}
                       />
                     </RowBetween>
-                  )}
-                  <RowBetween align="center">
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                      {/* onClick={toggleSettings}^ */}
-                      Bridging Fee
+                  )} */}
+            {/* <RowBetween align="center"> */}
+            {/* <ClickableText fontWeight={500} fontSize={14} color={theme.text2}> */}
+            {/* onClick={toggleSettings}^ */}
+            {/* Bridging Fee
                     </ClickableText>
-                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2}>
-                      {/* onClick={toggleSettings}^ */}
-                      {allowedSlippage / 100}%
-                    </ClickableText>
-                  </RowBetween>
-                </AutoColumn>
+                    <ClickableText fontWeight={500} fontSize={14} color={theme.text2}> */}
+            {/* onClick={toggleSettings}^ */}
+            {/* {allowedSlippage / 100}%
+                    </ClickableText> */}
+            {/* </RowBetween> */}
+            {/* </AutoColumn>
               </Card>
-            )}
+            )} */}
           </AutoColumn>
 
           <BottomGrouping>
             {!account ? (
               <ButtonSlanted onClick={toggleWalletModal}>Connect Wallet</ButtonSlanted>
-            ) : chainId !== ChainId.MUMBAI ? (
+            ) : chainId !== ChainId.MUMBAI && token.symbol === 'USDC' ? (
               <ButtonError
                 onClick={() => {
                   if (library && library.provider.request) {
@@ -555,11 +617,57 @@ export default function Gud() {
                   }
                 }}
               >
+                Please switch to Gauss Induction Labs network
+              </ButtonError>
+            ) : chainId !== ChainId.GIL && token.symbol === 'GUD' ? (
+              <ButtonError
+                onClick={() => {
+                  if (library && library.provider.request) {
+                    library.provider
+                      .request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: `0x${ChainId.GIL.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                      })
+                      .catch((switchError) => {
+                        if (switchError.code === 4902) {
+                          // add the network
+                          library.provider
+                            .request({
+                              method: 'wallet_addEthereumChain',
+                              params: [
+                                {
+                                  chainId: `0x${ChainId.GIL.toString(16)}`,
+                                  chainName: 'Gauss Induction Labs',
+                                  nativeCurrency: {
+                                    name: 'GANG',
+                                    symbol: 'GANG',
+                                    decimals: 18,
+                                  },
+                                  rpcUrls: ['https://rpc.giltestnet.com/'],
+                                  blockExplorerUrls: ['https://explorer.giltestnet.com/'],
+                                },
+                              ],
+                            })
+                            .catch((addError) => {
+                              console.error(addError);
+                            });
+                        } else {
+                          console.error(switchError);
+                        }
+                      });
+                  }
+                }}
+              >
                 Please switch to Polygon Mumbai network
               </ButtonError>
             ) : formattedAmounts[Field.INPUT] === '' ? (
               <ButtonError disabled>Please enter valid amount</ButtonError>
-            ) : formattedAmounts[Field.INPUT] > allowance ? (
+            ) : loading === true ? (
+              <ButtonPrimary disabled>
+                <span className="mr-2">{!approveDone ? `Approving...` : `Bridging...`}</span>&nbsp;
+                <Loader stroke="#A6AAB5" />
+              </ButtonPrimary>
+            ) : approveDone === false ? (
               <ButtonSlanted onClick={() => handleApprove()}>Approve</ButtonSlanted>
             ) : (
               <ButtonSlanted onClick={() => handleBridge()}>Bridge</ButtonSlanted>

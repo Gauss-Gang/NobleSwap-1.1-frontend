@@ -23,6 +23,7 @@ var _SOLIDITY_TYPE_MAXIMA;
   ChainId[ChainId["MAINNET"] = 1] = "MAINNET";
   ChainId[ChainId["ROPSTEN"] = 3] = "ROPSTEN";
   ChainId[ChainId["GIL"] = 1452] = "GIL";
+  ChainId[ChainId["GAUSS"] = 1777] = "GAUSS";
   ChainId[ChainId["POLYGON"] = 137] = "POLYGON";
   ChainId[ChainId["MUMBAI"] = 80001] = "MUMBAI";
   ChainId[ChainId["G\xD6RLI"] = 5] = "G\xD6RLI";

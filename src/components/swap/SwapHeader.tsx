@@ -27,7 +27,7 @@ export function GudHeader({ expressMode, setExpressMode }) {
   return (
     <StyledSwapHeader>
       <RowBetween>
-        <TYPE.black fontWeight={500}>Stable bridge</TYPE.black>
+        <TYPE.black fontWeight={500}>GUD Bridge</TYPE.black>
         <SettingsGud expressMode={expressMode} setExpressMode={setExpressMode} />
       </RowBetween>
     </StyledSwapHeader>
