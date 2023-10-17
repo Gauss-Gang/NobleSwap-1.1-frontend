@@ -3,7 +3,7 @@ import 'inter-ui';
 import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { NetworkContextName } from './constants';
 import './i18n';
 import App from './pages/App';
@@ -43,9 +43,9 @@ ReactDOM.render(
           <Updaters />
           <ThemeProvider>
             <ThemedGlobalStyle />
-            <HashRouter>
+            <BrowserRouter>
               <App />
-            </HashRouter>
+            </BrowserRouter>
           </ThemeProvider>
         </Provider>
       </Web3ProviderNetwork>

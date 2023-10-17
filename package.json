@@ -89,9 +89,12 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "postinstall": "rm -rf ./node_modules/@uniswap/sdk; cp -r ./forks/@uniswap/sdk ./node_modules/@uniswap/sdk",
+    "postinstall-windows": "rmdir /s /q .\\node_modules\\@uniswap\\sdk && xcopy /e /i .\\forks\\@uniswap\\sdk .\\node_modules\\@uniswap\\sdk",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
     "@types/lodash": "4.14.121",
     "@uniswap/default-token-list": "2.0.0",
     "dotenv": "^10.0.0",

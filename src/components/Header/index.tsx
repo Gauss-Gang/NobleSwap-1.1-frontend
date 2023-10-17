@@ -243,6 +243,8 @@ export const StyledMenuButton = styled.button`
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.GIL]: 'GIL',
+  [ChainId.POLYGON]: 'Polygon',
+  [ChainId.MUMBAI]: 'Mumbai',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Goerli',
   [ChainId.KOVAN]: 'Kovan',
@@ -280,6 +282,9 @@ export default function Header() {
           }
         >
           {t('pool')}
+        </StyledNavLink>
+        <StyledNavLink id={`gud-nav-link`} to={'/gud'}>
+          {t('GUD')}
         </StyledNavLink>
       </HeaderLinks>
 

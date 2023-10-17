@@ -1,10 +1,10 @@
 import { Currency, Pair } from '@uniswap/sdk';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { useCurrencyBalance } from '../../state/wallet/hooks';
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
-import CurrencyLogo from '../CurrencyLogo';
+import CurrencySearchModal, { CurrencySearchModalGUD } from '../SearchModal/CurrencySearchModal';
+import CurrencyLogo, { CurrencyLogoGud } from '../CurrencyLogo';
 import DoubleCurrencyLogo from '../DoubleLogo';
 import { RowBetween } from '../Row';
 import { TYPE } from '../../theme';
@@ -14,6 +14,31 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg';
 import { useActiveWeb3React } from '../../hooks';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../../hooks/useTheme';
+import { useWeb3React } from '@web3-react/core';
+import { Contract } from 'ethers';
+import { formatUnits } from '@ethersproject/units';
+
+const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -22,6 +47,28 @@ const InputRow = styled.div<{ selected: boolean }>`
 `;
 
 const CurrencySelect = styled.button`
+  align-items: center;
+  height: 2.2rem;
+  font-size: 20px;
+  font-weight: 500;
+  border: none;
+  background-color: ${({ theme }) => theme.bg3};
+  color: ${({ theme }) => theme.text1};
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  padding: 0 0.5rem;
+  transition: 0.2s;
+
+  :focus,
+  :hover {
+    background-color: ${({ theme }) => darken(0.1, theme.bg3)};
+  }
+`;
+
+const CurrencySelectGud = styled.button`
   align-items: center;
   height: 2.2rem;
   font-size: 20px;
@@ -241,6 +288,141 @@ export default function CurrencyInputPanel({
           selectedCurrency={currency}
           otherSelectedCurrency={otherCurrency}
           showCommonBases={showCommonBases}
+        />
+      )}
+    </InputPanel>
+  );
+}
+/* eslint-disable react/prop-types */
+export function CurrencyInputPanelGud({
+  value,
+  onUserInput,
+  onMax,
+  showMaxButton,
+  label,
+  onCurrencySelect,
+  currency = '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
+  disableCurrencySelect = false,
+  hideBalance = false,
+  pair = null, // used for double token logo
+  hideInput = false,
+  otherCurrency,
+  id,
+  showCommonBases,
+  customBalanceText,
+  balance,
+  setBalance,
+  setToken,
+  token,
+}: CurrencyInputPanelProps) {
+  const { t } = useTranslation();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const { library } = useWeb3React<Web3Provider>();
+  const { account } = useActiveWeb3React();
+  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined);
+  const theme = useTheme();
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false);
+  }, [setModalOpen]);
+
+  useEffect(() => {
+    if (account && library) {
+      const tokenContract = new Contract(token.address, ERC20_ABI, library);
+
+      const fetchBalance = async () => {
+        try {
+          const result = await tokenContract.balanceOf(account);
+          const formattedResult = formatUnits(result, 6); // Assuming your token has 18 decimals, adjust if different
+          setBalance(formattedResult);
+        } catch (err) {
+          console.error('Error fetching balance:', err);
+        }
+      };
+
+      fetchBalance();
+    }
+  }, [account, library, value]);
+
+  return (
+    <InputPanel id={id}>
+      <Container hideInput={hideInput}>
+        {!hideInput && (
+          <LabelRow>
+            <RowBetween>
+              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+              {account && (
+                <TYPE.body
+                  onClick={onMax}
+                  color={theme.text2}
+                  fontWeight={500}
+                  fontSize={14}
+                  style={{ display: 'inline', cursor: 'pointer' }}
+                >
+                  Balance: {balance}
+                  {/* {
+                    ? (customBalanceText ?? 'Balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                    : ' -'} */}
+                </TYPE.body>
+              )}
+            </RowBetween>
+          </LabelRow>
+        )}
+        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+          {!hideInput && (
+            <>
+              <NumericalInput
+                className="token-amount-input"
+                value={value}
+                onUserInput={(val) => {
+                  onUserInput(val);
+                }}
+              />
+              {account && currency && showMaxButton && label !== 'To' && (
+                <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+              )}
+            </>
+          )}
+          <CurrencySelectGud
+            className="open-currency-select-button"
+            onClick={() => {
+              if (!disableCurrencySelect) {
+                setModalOpen(true);
+              }
+            }}
+          >
+            <Aligner>
+              {pair ? (
+                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+              ) : currency ? (
+                <CurrencyLogoGud currency={currency} size={'24px'} />
+              ) : null}
+              {pair ? (
+                <StyledTokenName className="pair-name-container">
+                  {pair?.token0.symbol}:{pair?.token1.symbol}
+                </StyledTokenName>
+              ) : (
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                  {token.symbol}
+                </StyledTokenName>
+              )}
+              {!disableCurrencySelect && <StyledDropDown />}
+            </Aligner>
+          </CurrencySelectGud>
+        </InputRow>
+      </Container>
+      {!disableCurrencySelect && onCurrencySelect && (
+        <CurrencySearchModalGUD
+          isOpen={modalOpen}
+          onDismiss={handleDismissSearch}
+          onCurrencySelect={onCurrencySelect}
+          selectedCurrency={currency}
+          otherSelectedCurrency={otherCurrency}
+          showCommonBases={showCommonBases}
+          setToken={setToken}
         />
       )}
     </InputPanel>

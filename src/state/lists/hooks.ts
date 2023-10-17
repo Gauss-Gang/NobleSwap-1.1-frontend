@@ -44,6 +44,8 @@ export type TokenAddressMap = Readonly<
 const EMPTY_LIST: TokenAddressMap = {
   [ChainId.KOVAN]: {},
   [ChainId.GIL]: {},
+  [ChainId.POLYGON]: {},
+  [ChainId.MUMBAI]: {},
   [ChainId.ROPSTEN]: {},
   [ChainId.GÖRLI]: {},
   [ChainId.MAINNET]: {},
@@ -53,7 +55,7 @@ const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null;
 
 export function listToTokenMap(list: TokenList): TokenAddressMap {
-  console.log('list', list);
+  // console.log('list', list);
 
   const result = listCache?.get(list);
   if (result) return result;
@@ -104,6 +106,8 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     5: { ...map1[5], ...map2[5] },
     42: { ...map1[42], ...map2[42] },
     1452: { ...map1[1452], ...map2[1452] },
+    137: { ...map1[137], ...map2[137] },
+    80001: { ...map1[80001], ...map2[80001] },
   };
 }
 

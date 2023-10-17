@@ -19,6 +19,8 @@ var ChainId;
   ChainId[ChainId["MAINNET"] = 1] = "MAINNET";
   ChainId[ChainId["ROPSTEN"] = 3] = "ROPSTEN";
   ChainId[ChainId["GIL"] = 1452] = "GIL";
+  ChainId[ChainId["POLYGON"] = 137] = "POLYGON";
+  ChainId[ChainId["MUMBAI"] = 80001] = "MUMBAI";
   ChainId[ChainId["G\xD6RLI"] = 5] = "G\xD6RLI";
   ChainId[ChainId["KOVAN"] = 42] = "KOVAN";
 })(ChainId || (ChainId = {}));
@@ -38,8 +40,8 @@ var Rounding;
   Rounding[Rounding["ROUND_UP"] = 2] = "ROUND_UP";
 })(Rounding || (Rounding = {}));
 
-var FACTORY_ADDRESS = '0xD68BfbaEFb79653B1F63FD25B7ba48Fb81A047E4';
-var INIT_CODE_HASH = '0xb85e49983fdc23d0eedee4b428f6391e859170fa857162c70f5756c75977b653';
+var FACTORY_ADDRESS = '0x6dbc8DeF71473A3e9571a805f2551F08667C4b56';
+var INIT_CODE_HASH = '0x4696d221ed18e38d0eabeaa52cb0a9c3ff15edc97429b2a9bbbe7691cd0cacf8';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
@@ -438,8 +440,7 @@ function currencyEquals(currencyA, currencyB) {
     return currencyA === currencyB;
   }
 }
-
-var WETH = (_WETH = {}, _WETH[ChainId.MAINNET] = /*#__PURE__*/new Token(ChainId.MAINNET, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.ROPSTEN] = /*#__PURE__*/new Token(ChainId.ROPSTEN, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.GIL] = /*#__PURE__*/new Token(ChainId.GIL, '0x624814Bca9A5d5620E350264f839b93f766B60a2', 18, 'wGANG', 'Wrapped GANG'), _WETH[ChainId.GÖRLI] = /*#__PURE__*/new Token(ChainId.GÖRLI, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.KOVAN] = /*#__PURE__*/new Token(ChainId.KOVAN, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'), _WETH);
+var WETH = (_WETH = {}, _WETH[ChainId.MAINNET] = /*#__PURE__*/new Token(ChainId.MAINNET, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.ROPSTEN] = /*#__PURE__*/new Token(ChainId.ROPSTEN, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.GIL] = /*#__PURE__*/new Token(ChainId.GIL, '0x624814Bca9A5d5620E350264f839b93f766B60a2', 18, 'wGANG', 'Wrapped GANG'), _WETH[ChainId.GÖRLI] = /*#__PURE__*/new Token(ChainId.GÖRLI, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.KOVAN] = /*#__PURE__*/new Token(ChainId.KOVAN, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.POLYGON] = /*#__PURE__*/new Token(ChainId.POLYGON, '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', 18, 'WMATIC', 'Wrapped Matic'), _WETH[ChainId.MUMBAI] = /*#__PURE__*/new Token(ChainId.MUMBAI, '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889', 18, 'WMATIC', 'Wrapped Matic'), _WETH);
 
 var _toSignificantRoundin, _toFixedRounding;
 var Decimal = /*#__PURE__*/toFormat(_Decimal);
@@ -1498,7 +1499,10 @@ var ERC20 = [
 ];
 
 var _TOKEN_DECIMALS_CACHE;
-var TOKEN_DECIMALS_CACHE = (_TOKEN_DECIMALS_CACHE = {}, _TOKEN_DECIMALS_CACHE);
+var TOKEN_DECIMALS_CACHE = (_TOKEN_DECIMALS_CACHE = {}, _TOKEN_DECIMALS_CACHE[ChainId.MAINNET] = {
+  '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': 9 // DGD
+
+}, _TOKEN_DECIMALS_CACHE);
 /**
  * Contains methods for constructing instances of pairs and tokens from on-chain data.
  */

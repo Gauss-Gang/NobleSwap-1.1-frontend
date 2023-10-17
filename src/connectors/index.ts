@@ -10,7 +10,7 @@ const REACT_APP_NETWORK_URL = process.env.REACT_APP_NETWORK_URL;
 // const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
 // const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
 
-export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1452');
+export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '1');
 
 if (typeof REACT_APP_NETWORK_URL === 'undefined') {
   throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`);
@@ -25,13 +25,19 @@ export function getNetworkLibrary(): Web3Provider {
   return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any));
 }
 
+// const pathname = window.location.pathname;
+
+// const supportedChainIds = pathname === '/gud' ? [137, 80001] : [1452];
+
+// export const injected = new InjectedConnector({ supportedChainIds });
+// original
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 1452],
+  supportedChainIds: [1, 1452, 137, 80001],
 });
 
 // mainnet only
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1777: REACT_APP_NETWORK_URL },
+  rpc: { 1: REACT_APP_NETWORK_URL },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: 15000,

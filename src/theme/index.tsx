@@ -43,7 +43,7 @@ export function colors(darkMode: boolean): Colors {
     // text
     text1: darkMode ? '#FFFFFF' : '#FFFFFF',
     text2: darkMode ? '#C3C5CB' : '#565A69',
-    text3: darkMode ? '#6C7284' : '#888D9B',
+    text3: darkMode ? '#A6AAB5' : '#888D9B', // #6C7284 => #A6AAB5
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
@@ -52,7 +52,7 @@ export function colors(darkMode: boolean): Colors {
     bg2: darkMode ? '#27292e' : '#ededed',
     bg3: darkMode ? '#3a3d47' : '#1b3279',
     bg4: darkMode ? '#4c4f5c' : '#CED0D9',
-    bg5: darkMode ? '#6C7284' : '#888D9B',
+    bg5: darkMode ? '#A6AAB5' : '#888D9B', // #6C7284 => #A6AAB5
 
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,.425)' : 'rgba(0,0,0,0.3)',
@@ -179,7 +179,7 @@ export const TYPE = {
 
 export const FixedGlobalStyle = createGlobalStyle`
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-display: fallback;
 }
 

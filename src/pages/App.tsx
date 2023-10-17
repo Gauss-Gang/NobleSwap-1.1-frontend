@@ -19,6 +19,9 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap';
 import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from './Swap/redirects';
 import Logo from '../assets/images/logo.png';
+import NobleswapBackground from '../assets/images/nobleswap_bg.png';
+import './globals.css';
+import Gud from './Gud';
 
 const AppWrapper = styled.div`
   min-height: 100vh;
@@ -55,6 +58,18 @@ const NobleImageWrapper = styled.img`
   bottom: 5%;
 `;
 
+const NobleswapBackgroundStyled = styled.div`
+  background: url('${() => NobleswapBackground}');
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  inset: 0;
+  z-index: -2;
+`;
+
 export default function App() {
   return (
     <Suspense fallback={null}>
@@ -70,6 +85,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/gud" component={Gud} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={Pool} />
@@ -86,6 +102,7 @@ export default function App() {
             </Switch>
           </Web3ReactManager>
           <NobleImageWrapper src={Logo} />
+          <NobleswapBackgroundStyled />
         </BodyWrapper>
       </AppWrapper>
     </Suspense>
