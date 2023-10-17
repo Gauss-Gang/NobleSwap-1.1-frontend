@@ -246,3 +246,116 @@ export default function SettingsTab() {
     </StyledMenu>
   );
 }
+
+/* eslint-disable react/prop-types */
+export function SettingsGud({ setExpressMode, expressMode }) {
+  const node = useRef<HTMLDivElement>();
+  const open = useModalOpen(ApplicationModal.SETTINGS);
+  const toggle = useToggleSettingsMenu();
+
+  const theme = useContext(ThemeContext);
+
+  const [expertMode, toggleExpertMode] = useExpertModeManager();
+
+  // show confirmation view before turning on
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useOnClickOutside(node, open ? toggle : undefined);
+
+  return (
+    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
+    <StyledMenu ref={node as any}>
+      <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
+        <ModalContentWrapper>
+          <AutoColumn gap="lg">
+            <RowBetween style={{ padding: '0 2rem' }}>
+              <div />
+              <Text fontWeight={500} fontSize={20}>
+                Are you sure?
+              </Text>
+              <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
+            </RowBetween>
+            <Break />
+            <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
+              <Text fontWeight={500} fontSize={20}>
+                Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
+                in bad rates and lost funds.
+              </Text>
+              <Text fontWeight={600} fontSize={20}>
+                ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.
+              </Text>
+              <ButtonError
+                error={true}
+                padding={'12px'}
+                onClick={() => {
+                  if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
+                    toggleExpertMode();
+                    setShowConfirmation(false);
+                  }
+                }}
+              >
+                <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
+                  Turn On Expert Mode
+                </Text>
+              </ButtonError>
+            </AutoColumn>
+          </AutoColumn>
+        </ModalContentWrapper>
+      </Modal>
+      <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
+        <StyledMenuIcon />
+        {expertMode ? (
+          <EmojiWrapper>
+            <span role="img" aria-label="wizard-icon">
+              🧙
+            </span>
+          </EmojiWrapper>
+        ) : null}
+      </StyledMenuButton>
+      {open && (
+        <MenuFlyout>
+          <AutoColumn gap="md" style={{ padding: '1rem' }}>
+            <Text fontWeight={600} fontSize={14}>
+              Transaction Settings
+            </Text>
+            {/* <TransactionSettings
+              rawSlippage={userSlippageTolerance}
+              setRawSlippage={setUserslippageTolerance}
+              deadline={ttl}
+              setDeadline={setTtl}
+            />
+            <Text fontWeight={600} fontSize={14}>
+              Interface Settings
+            </Text> */}
+            <RowBetween>
+              <RowFixed>
+                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                  Toggle Express Mode
+                </TYPE.black>
+                <QuestionHelper text="Faster bridging process - bigger fee." />
+              </RowFixed>
+              <Toggle
+                id="toggle-express-mode-button-gud"
+                isActive={expressMode}
+                toggle={() => setExpressMode(!expressMode)}
+              />
+            </RowBetween>
+            {/* <RowBetween>
+              <RowFixed>
+                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                  Disable Multihops
+                </TYPE.black>
+                <QuestionHelper text="Restricts swaps to direct pairs only." />
+              </RowFixed>
+              <Toggle
+                id="toggle-disable-multihop-button"
+                isActive={singleHopOnly}
+                toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
+              />
+            </RowBetween> */}
+          </AutoColumn>
+        </MenuFlyout>
+      )}
+    </StyledMenu>
+  );
+}

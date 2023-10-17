@@ -20,7 +20,8 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useTheme from 'hooks/useTheme';
 import ImportRow from './ImportRow';
 import { Edit } from 'react-feather';
-import { ButtonPrimary } from 'components/Button';
+import { ButtonOutlined, ButtonOutlinedGUD, ButtonPrimary } from 'components/Button';
+import { CurrencyLogoGud } from 'components/CurrencyLogo';
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -281,6 +282,187 @@ export function CurrencySearch({
           </ButtonText>
         </Row>
       </Footer>
+    </ContentWrapper>
+  );
+}
+/* eslint-disable react/prop-types */
+export function CurrencySearchGUD({
+  selectedCurrency,
+  onCurrencySelect,
+  otherSelectedCurrency,
+  showCommonBases,
+  onDismiss,
+  isOpen,
+  showManageView,
+  showImportView,
+  setImportToken,
+  setToken,
+}: CurrencySearchProps) {
+  const { t } = useTranslation();
+  const { chainId } = useActiveWeb3React();
+  const theme = useTheme();
+
+  const currency = { decimals: 18, symbol: 'GANG', name: 'GANG' };
+  const tokens = [
+    {
+      symbol: 'GUD',
+      address: '0x341fc0Fd29AE6517E789961AFf52167898E136BE',
+    },
+    {
+      symbol: 'USDC',
+      address: '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
+    },
+  ];
+
+  // refs for fixed size lists
+  const fixedList = useRef<FixedSizeList>();
+
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [invertSearchOrder] = useState<boolean>(false);
+
+  const allTokens = useAllTokens();
+  // const inactiveTokens: Token[] | undefined = useFoundOnInactiveList(searchQuery)
+
+  // if they input an address, use it
+  const searchToken = useToken(searchQuery);
+  const searchTokenIsAdded = useIsUserAddedToken(searchToken);
+
+  const showETH: boolean = useMemo(() => {
+    const s = searchQuery.toLowerCase().trim();
+    return s === '' || s === 'e' || s === 'et' || s === 'eth';
+  }, [searchQuery]);
+
+  const tokenComparator = useTokenComparator(invertSearchOrder);
+
+  const filteredTokens: Token[] = useMemo(() => {
+    return filterTokens(Object.values(allTokens), searchQuery);
+  }, [allTokens, searchQuery]);
+
+  const filteredSortedTokens: Token[] = useMemo(() => {
+    const sorted = filteredTokens.sort(tokenComparator);
+    const symbolMatch = searchQuery
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((s) => s.length > 0);
+
+    if (symbolMatch.length > 1) {
+      return sorted;
+    }
+
+    return [
+      // sort any exact symbol matches first
+      ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
+
+      // sort by tokens whos symbols start with search substrng
+      ...sorted.filter(
+        (token) =>
+          token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim()) &&
+          token.symbol?.toLowerCase() !== symbolMatch[0]
+      ),
+
+      // rest that dont match upove
+      ...sorted.filter(
+        (token) =>
+          !token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim()) &&
+          token.symbol?.toLowerCase() !== symbolMatch[0]
+      ),
+    ];
+  }, [filteredTokens, searchQuery, tokenComparator]);
+
+  const handleCurrencySelect = useCallback(
+    (currency: Currency) => {
+      onCurrencySelect(currency);
+      onDismiss();
+    },
+    [onDismiss, onCurrencySelect]
+  );
+
+  // clear the input on open
+  useEffect(() => {
+    if (isOpen) setSearchQuery('');
+  }, [isOpen]);
+
+  // manage focus on modal show
+  const inputRef = useRef<HTMLInputElement>();
+  const handleInput = useCallback((event) => {
+    const input = event.target.value;
+    const checksummedInput = isAddress(input);
+    setSearchQuery(checksummedInput || input);
+    fixedList.current?.scrollTo(0);
+  }, []);
+
+  const handleEnter = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        const s = searchQuery.toLowerCase().trim();
+        if (s === 'eth') {
+          handleCurrencySelect(ETHER);
+        } else if (filteredSortedTokens.length > 0) {
+          if (
+            filteredSortedTokens[0].symbol?.toLowerCase() === searchQuery.trim().toLowerCase() ||
+            filteredSortedTokens.length === 1
+          ) {
+            handleCurrencySelect(filteredSortedTokens[0]);
+          }
+        }
+      }
+    },
+    [filteredSortedTokens, handleCurrencySelect, searchQuery]
+  );
+
+  // menu ui
+  const [open, toggle] = useToggle(false);
+  const node = useRef<HTMLDivElement>();
+  useOnClickOutside(node, open ? toggle : undefined);
+
+  // if no results on main list, show option to expand into inactive
+  const [showExpanded, setShowExpanded] = useState(false);
+  const inactiveTokens = useFoundOnInactiveList(searchQuery);
+
+  // reset expanded results on query reset
+  useEffect(() => {
+    if (searchQuery === '') {
+      setShowExpanded(false);
+    }
+  }, [setShowExpanded, searchQuery]);
+
+  return (
+    <ContentWrapper>
+      <PaddedColumn gap="16px">
+        <RowBetween>
+          <Text fontWeight={500} fontSize={16}>
+            Select a token
+          </Text>
+          <CloseIcon onClick={onDismiss} />
+        </RowBetween>
+      </PaddedColumn>
+      <Separator />
+      <Column style={{ padding: '20px', height: '100%' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <ButtonOutlinedGUD
+            onClick={() => {
+              setToken(tokens[1]);
+              onDismiss();
+            }}
+          >
+            <img src="/images/usdc.png" alt="usdc" width="24px" height="24px" />
+            &nbsp;
+            <span>USDC</span>
+          </ButtonOutlinedGUD>
+        </div>
+        <div>
+          <ButtonOutlinedGUD
+            onClick={() => {
+              setToken(tokens[0]);
+              onDismiss();
+            }}
+          >
+            <img src="/images/usdc.png" alt="usdc" width="24px" height="24px" />
+            &nbsp;
+            <span>GUD</span>
+          </ButtonOutlinedGUD>
+        </div>
+      </Column>
     </ContentWrapper>
   );
 }
