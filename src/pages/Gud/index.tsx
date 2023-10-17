@@ -1,30 +1,23 @@
 /* prettier-ignore */
-import { ChainId, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk';
+import { ChainId, CurrencyAmount, Token, Trade } from '@uniswap/sdk';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ArrowDown } from 'react-feather';
-import { Text } from 'rebass';
 import { ThemeContext } from 'styled-components';
 import AddressInputPanel from '../../components/AddressInputPanel';
-import { ButtonError, ButtonPrimary, ButtonConfirmed, ButtonSlanted } from '../../components/Button';
-import Card, { GreyCard } from '../../components/Card';
+import { ButtonError, ButtonPrimary, ButtonSlanted } from '../../components/Button';
 import Column, { AutoColumn } from '../../components/Column';
-import ConfirmSwapModal from '../../components/swap/ConfirmSwapModal';
 import { CurrencyInputPanelGud } from '../../components/CurrencyInputPanel';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
-import { AutoRow, RowBetween } from '../../components/Row';
-import confirmPriceImpactWithoutFee from '../../components/swap/confirmPriceImpactWithoutFee';
+import { AutoRow } from '../../components/Row';
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from '../../components/swap/styleds';
-import TradePrice from '../../components/swap/TradePrice';
 import TokenWarningModal from '../../components/TokenWarningModal';
 import ProgressSteps from '../../components/ProgressSteps';
 import { GudHeader } from '../../components/swap/SwapHeader';
-import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown';
 import { useActiveWeb3React } from '../../hooks';
 import { useCurrency, useAllTokens } from '../../hooks/Tokens';
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback';
-import { useSwapCallback } from '../../hooks/useSwapCallback';
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback';
-import { useAddPopup, useToggleSettingsMenu, useWalletModalToggle } from '../../state/application/hooks';
+import { useAddPopup, useWalletModalToggle } from '../../state/application/hooks';
 import { Field } from '../../state/swap/actions';
 import {
   useDefaultsFromURLSearch,
@@ -32,19 +25,17 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from '../../state/swap/hooks';
-import { useExpertModeManager, useUserSlippageTolerance, useUserSingleHopOnly } from '../../state/user/hooks';
-import { LinkStyledButton, TYPE } from '../../theme';
+import { useExpertModeManager, useUserSlippageTolerance } from '../../state/user/hooks';
+import { LinkStyledButton } from '../../theme';
 import { maxAmountSpend } from '../../utils/maxAmountSpend';
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices';
 import AppBody from '../AppBody';
-import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
 import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import { Contract } from 'ethers';
+import { Contract, ethers, providers } from 'ethers';
 import { parseUnits } from '@ethersproject/units';
 import BRIDGE_ABI from './GUDBridgeServiceABI.json';
-import PopupItem from 'components/Popups/PopupItem';
 
 const ERC20_ABI = [
   {
@@ -93,10 +84,28 @@ const ERC20_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    type: 'function',
+  },
 ];
 
-const USDC_ADDRESS = '0x607D772B71FF8480a6A0D9b148D951AEdc990769';
 const BRIDGE_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
+const GIL_PROVIDER_URL = 'https://rpc.giltestnet.com/';
+const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com/';
 
 export default function Gud() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -104,17 +113,23 @@ export default function Gud() {
   const [expressMode, setExpressMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [approveDone, setApproveDone] = useState<boolean>(false);
+  // const [correctPaperBalance, setCorrectPaperBalance] = useState<boolean>(false);
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
     symbol: 'USDC',
     address: '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
   });
   const [allowance, setAllowance] = useState<string>('0');
+  // const [paperBalance, setPaperBalance] = useState<string>('0');
   const [balance, setBalance] = useState('0');
+  const [transactionReceipt, setTransactionReceipt] = useState<any>(null);
   const location = useLocation();
   const { chainId, library } = useWeb3React();
 
   const addPopup = useAddPopup();
+
+  const gilProvider = new ethers.providers.JsonRpcProvider(GIL_PROVIDER_URL);
+  const mumbaiProvider = new ethers.providers.JsonRpcProvider(MUMBAI_PROVIDER_URL);
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -143,9 +158,6 @@ export default function Gud() {
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle();
-
-  // for expert mode
-  const toggleSettings = useToggleSettingsMenu();
   const [isExpertMode] = useExpertModeManager();
 
   // get custom setting values for user
@@ -183,27 +195,6 @@ export default function Gud() {
     },
     [onUserInput]
   );
-  const handleTypeOutput = useCallback(
-    (value: string) => {
-      onUserInput(Field.OUTPUT, value);
-    },
-    [onUserInput]
-  );
-
-  // modal and loading
-  const [{ showConfirm, tradeToConfirm, swapErrorMessage, attemptingTxn, txHash }, setSwapState] = useState<{
-    showConfirm: boolean;
-    tradeToConfirm: Trade | undefined;
-    attemptingTxn: boolean;
-    swapErrorMessage: string | undefined;
-    txHash: string | undefined;
-  }>({
-    showConfirm: false,
-    tradeToConfirm: undefined,
-    attemptingTxn: false,
-    swapErrorMessage: undefined,
-    txHash: undefined,
-  });
 
   const formattedAmounts = {
     [independentField]: typedValue,
@@ -211,12 +202,6 @@ export default function Gud() {
       ? parsedAmounts[independentField]?.toExact() ?? ''
       : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   };
-
-  const route = trade?.route;
-  const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
-  );
-  const noRoute = !route;
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage);
@@ -234,38 +219,7 @@ export default function Gud() {
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT]);
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput));
 
-  // the callback to execute the swap
-  const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(trade, allowedSlippage, recipient);
-
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade);
-
-  const [singleHopOnly] = useUserSingleHopOnly();
-
-  const handleSwap = useCallback(() => {
-    if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
-      return;
-    }
-    if (!swapCallback) {
-      return;
-    }
-    setSwapState({ attemptingTxn: true, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: undefined });
-    swapCallback()
-      .then((hash) => {
-        setSwapState({ attemptingTxn: false, tradeToConfirm, showConfirm, swapErrorMessage: undefined, txHash: hash });
-      })
-      .catch((error) => {
-        setSwapState({
-          attemptingTxn: false,
-          tradeToConfirm,
-          showConfirm,
-          swapErrorMessage: error.message,
-          txHash: undefined,
-        });
-      });
-  }, [priceImpactWithoutFee, swapCallback, tradeToConfirm, showConfirm]);
-
-  // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false);
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
@@ -279,18 +233,6 @@ export default function Gud() {
       (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
     !(priceImpactSeverity > 3 && !isExpertMode);
 
-  const handleConfirmDismiss = useCallback(() => {
-    setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash });
-    // if there was a tx hash, we want to clear the input
-    if (txHash) {
-      onUserInput(Field.INPUT, '');
-    }
-  }, [attemptingTxn, onUserInput, swapErrorMessage, tradeToConfirm, txHash]);
-
-  const handleAcceptChanges = useCallback(() => {
-    setSwapState({ tradeToConfirm: trade, swapErrorMessage, txHash, attemptingTxn, showConfirm });
-  }, [attemptingTxn, showConfirm, swapErrorMessage, trade, txHash]);
-
   const handleInputSelect = useCallback(
     (inputCurrency) => {
       setApprovalSubmitted(false); // reset 2 step UI for approvals
@@ -303,14 +245,10 @@ export default function Gud() {
     onUserInput(Field.INPUT, Number(balance));
   }, [Number(balance), onUserInput]);
 
-  const handleOutputSelect = useCallback(
-    (outputCurrency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
-    [onCurrencySelection]
-  );
-
   const handleApprove = async () => {
     if (!library || !account) return;
     setLoading(true);
+    setTransactionReceipt(null);
     const tokenContract = new Contract(token.address, ERC20_ABI, library.getSigner(account));
     try {
       // Convert the amount to wei format
@@ -318,6 +256,7 @@ export default function Gud() {
       const tx = await tokenContract.approve(BRIDGE_ADDRESS, amountInWei);
       console.log('Approval transaction:', tx);
       await tx.wait(); // waits for the transaction to be mined
+      setTransactionReceipt(tx);
       setApproveDone(true);
       addPopup({
         txn: {
@@ -338,6 +277,7 @@ export default function Gud() {
   async function handleBridge() {
     if (!library || !account) return;
     setLoading(true);
+    setTransactionReceipt(null);
     const contract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, library!.getSigner());
     const formattedAmount = parseUnits(formattedAmounts[Field.INPUT], 6);
     if (account) {
@@ -345,6 +285,7 @@ export default function Gud() {
         const tx = await contract.transfer(account, formattedAmount, account, expressMode); // Assuming express mode is true
         const receipt = await tx.wait();
         setApproveDone(false);
+        setTransactionReceipt(receipt);
         addPopup({
           txn: {
             hash: receipt.transactionHash,
@@ -362,10 +303,6 @@ export default function Gud() {
     onUserInput(Field.INPUT, '');
     setLoading(false);
   }
-
-  useEffect(() => {
-    allowance <= formattedAmounts[Field.INPUT] ? setApproveDone(false) : setApproveDone(true);
-  }, [allowance, formattedAmounts[Field.INPUT]]);
 
   useEffect(() => {
     // Check if the user is on the /gud page
@@ -466,9 +403,10 @@ export default function Gud() {
     }
   }, [chainId]);
 
+  // fetching the allowance for bridging
   useEffect(() => {
     if (account && library) {
-      const tokenContract = new Contract(USDC_ADDRESS, ERC20_ABI, library);
+      const tokenContract = new Contract(token.address, ERC20_ABI, library);
 
       const fetchAllowance = async () => {
         try {
@@ -484,36 +422,107 @@ export default function Gud() {
   }, [account, library, formattedAmounts[Field.INPUT]]);
 
   useEffect(() => {
-    // Create a contract instance
-    const contract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, library);
+    const formattedAllowance = Number(allowance) / 10 ** 6;
+    formattedAllowance < Number(formattedAmounts[Field.INPUT]) ? setApproveDone(false) : setApproveDone(true);
+  }, [allowance, formattedAmounts[Field.INPUT]]);
+  // end fetching allowance
 
+  // fetch PAPER BALANCE
+  // useEffect(() => {
+  //   if (account && library) {
+  //     const tokenContract = new Contract('0xBB9408a0e1D65986D2Aa2bdE370E2bD6aa279fa1', ERC20_ABI, library); // Dog Token ($DGT) address for testing purposes
+
+  //     const fetchBalance = async () => {
+  //       try {
+  //         const result = await tokenContract.balanceOf(account);
+  //         setPaperBalance(result.toString());
+  //       } catch (err) {
+  //         console.error('Error fetching allowance:', err);
+  //       }
+  //     };
+
+  //     fetchBalance();
+  //   }
+  // }, [account, library, formattedAmounts[Field.INPUT]]);
+
+  // useEffect(() => {
+  //   console.log('Amount:', 100000);
+  //   const formattedBalance = Number(paperBalance) / 10 ** 18;
+  //   console.log('Formatted balance:', formattedBalance);
+  //   formattedBalance < 100000 ? setCorrectPaperBalance(false) : setCorrectPaperBalance(true);
+  // }, [allowance, formattedAmounts[Field.INPUT]]);
+  // end fetch PAPER BALANCE
+
+  // WORKS - listening to events on the same chain (chain X listening to events on chain X)
+  // useEffect(() => {
+  //   // Create a contract instance
+  //   const contract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, library);
+
+  //   if (chainId === ChainId.MUMBAI) {
+  //     // Listen to LockGUD event
+  //     const onLockGUD = (sender, amount) => {
+  //       console.log(`Token locked by ${sender} with amount ${amount}`);
+  //       // Notify the user here, for example using a toast or a modal.
+  //     };
+
+  //     contract.on('LockGUD', onLockGUD);
+
+  //     // Cleanup listener when component is unmounted
+  //     return () => {
+  //       contract.off('LockGUD', onLockGUD);
+  //     };
+  //   } else if (chainId === ChainId.GIL) {
+  //     const onBurnGUD = (sender, amount) => {
+  //       console.log(`Token burned by ${sender} with amount ${amount}`);
+  //       // Notify the user here, for example using a toast or a modal.
+  //     };
+
+  //     contract.on('BurnGUD', onBurnGUD);
+
+  //     // Cleanup listener when component is unmounted
+  //     return () => {
+  //       contract.off('BurnGUD', onBurnGUD);
+  //     };
+  //   }
+  // }, [chainId, library]);
+
+  // DOESN'T WORK - listening to events on different chains (chain X listening to events on chain Y)
+  useEffect(() => {
+    // Depending on the current chainId, get the other chain's provider and contract instance
+    let otherProvider, otherContract;
     if (chainId === ChainId.MUMBAI) {
-      // Listen to LockGUD event
-      const onLockGUD = (sender, amount) => {
-        console.log(`Token locked by ${sender} with amount ${amount}`);
-        // Notify the user here, for example using a toast or a modal.
+      otherProvider = gilProvider;
+      otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
+      // Listen to MintGUD event on Gauss chain (GIL)
+      const onMintGUD = (recipient, amount) => {
+        if (recipient.toLowerCase() === account.toLowerCase()) {
+          // check if the event concerns the connected user
+          console.log(`Token minted for ${recipient} with amount ${amount} on Gauss chain.`);
+          // Notify the user here.
+        }
       };
-
-      contract.on('LockGUD', onLockGUD);
-
-      // Cleanup listener when component is unmounted
+      otherContract.on('MintGUD', onMintGUD);
       return () => {
-        contract.off('LockGUD', onLockGUD);
+        otherContract.off('MintGUD', onMintGUD);
       };
     } else if (chainId === ChainId.GIL) {
-      const onBurnGUD = (sender, amount) => {
-        console.log(`Token burned by ${sender} with amount ${amount}`);
-        // Notify the user here, for example using a toast or a modal.
+      otherProvider = mumbaiProvider;
+      otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
+      // Listen to UnlockGUD event on Mumbai
+      const onUnlockGUD = (recipient, amount) => {
+        if (recipient.toLowerCase() === account.toLowerCase()) {
+          // check if the event concerns the connected user
+          console.log(`Token unlocked for ${recipient} with amount ${amount} on Mumbai.`);
+          // Notify the user here.
+        }
       };
+      otherContract.on('UnlockGUD', onUnlockGUD);
 
-      contract.on('BurnGUD', onBurnGUD);
-
-      // Cleanup listener when component is unmounted
       return () => {
-        contract.off('BurnGUD', onBurnGUD);
+        otherContract.off('UnlockGUD', onUnlockGUD);
       };
     }
-  }, [chainId, library]);
+  }, [chainId, account]);
 
   return (
     <>
@@ -648,7 +657,7 @@ export default function Gud() {
                   }
                 }}
               >
-                Please switch to Gauss Induction Labs network
+                Please switch to Polygon Mumbai network
               </ButtonError>
             ) : chainId !== ChainId.GIL && token.symbol === 'GUD' ? (
               <ButtonError
@@ -689,7 +698,7 @@ export default function Gud() {
                   }
                 }}
               >
-                Please switch to Polygon Mumbai network
+                Please switch to Gauss Induction Labs network
               </ButtonError>
             ) : formattedAmounts[Field.INPUT] === '' || Number(formattedAmounts[Field.INPUT]) > Number(balance) ? (
               <ButtonError disabled>Please enter valid amount</ButtonError>
@@ -708,10 +717,13 @@ export default function Gud() {
                 <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
               </Column>
             )}
-            {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
           </BottomGrouping>
         </Wrapper>
       </AppBody>
     </>
   );
 }
+// line 679 start
+// : correctPaperBalance === false ? (
+//   <ButtonError disabled>Not enough $PAPER in wallet</ButtonError>
+// )
