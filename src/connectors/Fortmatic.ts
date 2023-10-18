@@ -9,6 +9,7 @@ const CHAIN_ID_NETWORK_ARGUMENT: { readonly [chainId in FormaticSupportedChains]
   [ChainId.MAINNET]: undefined,
   [ChainId.ROPSTEN]: 'ropsten',
   [ChainId.GIL]: 'GIL',
+  [ChainId.GAUSS]: 'gauss',
   [ChainId.POLYGON]: 'polygon',
   [ChainId.MUMBAI]: 'mumbai',
   [ChainId.KOVAN]: 'kovan',

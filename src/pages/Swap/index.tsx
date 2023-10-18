@@ -237,6 +237,7 @@ export default function Swap() {
   );
 
   const sellOBURN = async () => {
+    console.log('sellOBURN');
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
         const contractAddress = '0xF8E29457B81FE49BE488DC18960774D47c68B3BE';
@@ -244,9 +245,13 @@ export default function Swap() {
         const signer = provider.getSigner();
         const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
         const amountOBURN = ethers.utils.parseEther(typedValue.toString());
-        const amountGUD = ethers.utils.parseEther('0');
-        const slippage = 11;
+        const amountGUD = ethers.utils.parseEther('1');
+        const slippage = 2;
+        console.log('amountOBURN', amountOBURN);
+        console.log('amountGUD', amountGUD);
+        console.log('slippage', slippage);
         const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountGUD, slippage);
+        console.log('gasEstimate', gasEstimate);
         const tx = await BurnSwap.sellOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
@@ -260,16 +265,21 @@ export default function Swap() {
     }
   };
   const buyOBURN = async () => {
+    console.log('buyOBURN');
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        const contractAddress = '0x...';
+        const contractAddress = '0xF8E29457B81FE49BE488DC18960774D47c68B3BE';
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
         const signer = provider.getSigner();
         const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
-        const amountOBURN = ethers.utils.parseEther('0');
+        const amountOBURN = ethers.utils.parseEther('1');
         const amountGUD = ethers.utils.parseEther(typedValue.toString());
-        const slippage = 1;
+        const slippage = 2;
+        console.log('amountOBURN', amountOBURN);
+        console.log('amountGUD', amountGUD);
+        console.log('slippage', slippage);
         const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountGUD, slippage);
+        console.log('gasEstimate', gasEstimate);
         const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
@@ -458,9 +468,13 @@ export default function Swap() {
               </RowBetween>
             ) : (
               <ButtonError
-                onClick={() => {
+                onClick={async () => {
                   if (isExpertMode) {
                     handleSwap();
+                  } else if (currencies.INPUT?.symbol === 'OBURN') {
+                    await sellOBURN();
+                  } else if (currencies.OUTPUT?.symbol === 'OBURN') {
+                    await buyOBURN();
                   } else {
                     setSwapState({
                       tradeToConfirm: trade,

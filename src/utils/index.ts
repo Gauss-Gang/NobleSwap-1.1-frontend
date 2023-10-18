@@ -21,6 +21,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   1: '',
   3: 'ropsten.',
   1452: 'GIL.',
+  1777: 'gauss.',
   137: 'polygon.',
   80001: 'mumbai.',
   5: 'goerli.',
@@ -35,6 +36,8 @@ export function getEtherscanLink(
   let prefix;
   if (chainId == 1452) {
     prefix = `https://explorer.giltestnet.com`;
+  } else if (chainId === 1777) {
+    prefix = `https://explorer.gaussgang.com`;
   } else if (chainId == 137) {
     prefix = `https://polygonscan.com`;
   } else if (chainId == 80001) {
