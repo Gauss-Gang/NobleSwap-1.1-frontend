@@ -310,7 +310,7 @@ export default function Swap() {
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
         const BurnSwap = new ethers.Contract(
-          '0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246',
+          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD',
           burnSwapABI,
           library!.getSigner()
         );
@@ -319,19 +319,13 @@ export default function Swap() {
           ERC20_ABI,
           library!.getSigner()
         );
-        const allowance = await OnlyBurns.allowance(account, '0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246');
-        console.log('allowance', allowance);
         const amountOBURN = ethers.utils.parseEther(typedValue.toString());
         const amountGUD = ethers.utils.parseEther('0');
         const slippage = 17;
-        const approve = await OnlyBurns.approve('0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246', amountOBURN);
+        const approve = await OnlyBurns.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', amountOBURN);
         const approveReceipt = await approve.wait();
         console.log('approveReceipt', approveReceipt);
-        console.log('amountOBURN', amountOBURN);
-        console.log('amountGUD', amountGUD);
-        console.log('slippage', slippage);
         const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountGUD, slippage);
-        console.log('gasEstimate', gasEstimate);
         const tx = await BurnSwap.sellOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
@@ -348,26 +342,25 @@ export default function Swap() {
     console.log('buyOBURN');
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
+        // Parse the original amount
+        const originalAmountOBURN = ethers.utils.parseEther(formattedAmounts[Field.OUTPUT]);
+
+        // Calculate 5% less
+        const fivePercentLess = originalAmountOBURN.mul(95).div(100);
+        const amountOBURN = fivePercentLess;
+        const amountGUD = ethers.utils.parseUnits('0', 6);
+        const approvalAmount = ethers.utils.parseUnits(typedValue.toString(), 6);
+        const slippage = 17;
         const BurnSwap = new ethers.Contract(
-          '0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246', // old 0xF8E29457B81FE49BE488DC18960774D47c68B3BE
+          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD', // old 0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246
           burnSwapABI,
           library!.getSigner()
         );
         const GUD = new ethers.Contract('0x341fc0Fd29AE6517E789961AFf52167898E136BE', ERC20_ABI, library!.getSigner());
-        const allowance = await GUD.allowance(account, '0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246');
-        console.log('allowance: bigNumber to number', allowance.toNumber());
-        const amountOBURN = ethers.utils.parseEther('0');
-        const amountGUD = ethers.utils.parseUnits(typedValue.toString(), 6);
-        console.log('amountGUD', amountGUD);
-        const slippage = 50;
-        const approve = await GUD.approve('0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246', amountGUD);
+        const approve = await GUD.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', approvalAmount);
         const approveReceipt = await approve.wait();
         console.log('approveReceipt', approveReceipt);
-        console.log('amountOBURN', amountOBURN);
-        console.log('amountGUD: bigNumber to number', amountGUD.toNumber());
-        console.log('slippage', slippage);
         const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountGUD, slippage);
-        console.log('gasEstimate', gasEstimate);
         const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
         });
