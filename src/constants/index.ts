@@ -9,8 +9,8 @@ import {
 } from '../connectors';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const FACTORY_ADDRESS = '0x6dbc8DeF71473A3e9571a805f2551F08667C4b56';
-export const ROUTER_ADDRESS = '0xAb613C64a70f342605025a81bD7D444614c097e8';
+export const FACTORY_ADDRESS = '0x581B5b53AddA3C773934556A3Ee6E949D8c187Eb';
+export const ROUTER_ADDRESS = '0x1Ce4349FE6367B56528fd4EB20BCe5EADE19D00F';
 
 export const LP_TOKEN_NAME = 'Noble-LP-Token';
 export const LP_TOKEN_SYMBOL = 'NOBLE-LP';
@@ -34,16 +34,16 @@ export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
 
-// @TODO Austin - Fix this so it has the correct values
-// export const GUD = new Token(ChainId.GAUSS, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
+export const GUD = new Token(ChainId.GAUSS, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
 
-export const GUD = new Token(ChainId.GIL, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
+// Testnet
+// export const GUD = new Token(ChainId.GIL, '0x341fc0Fd29AE6517E789961AFf52167898E136BE', 6, 'GUD', 'Gauss Stable');
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS;
-export const TIMELOCK_ADDRESS = '0xc06A2A3E8F34dD76945f56068Fc336FBa9FF7628';
+export const TIMELOCK_ADDRESS = '0xCaf9E1b372F0c5741655A641662F508f05B35D87';
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   [TIMELOCK_ADDRESS]: 'Timelock',
@@ -53,6 +53,7 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
   [ChainId.GIL]: [WETH[ChainId.GIL]],
+  [ChainId.GAUSS]: [WETH[ChainId.GAUSS]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
 };
@@ -62,6 +63,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
+  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS]], // Add GUD back here
 };
 
 /**
@@ -86,6 +88,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [...WETH_ONLY[ChainId.ROPSTEN]],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
+  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS]], // Add GUD back here
   [ChainId.GÖRLI]: [...WETH_ONLY[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [...WETH_ONLY[ChainId.KOVAN]],
 };
