@@ -104,7 +104,7 @@ const ERC20_ABI = [
 ];
 
 const BRIDGE_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
-const GIL_PROVIDER_URL = 'https://rpc.giltestnet.com/';
+const GAUSS_PROVIDER_URL = 'https://rpc.gaussgang.com/';
 const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com/';
 
 export default function Gud() {
@@ -128,7 +128,7 @@ export default function Gud() {
 
   const addPopup = useAddPopup();
 
-  const gilProvider = new ethers.providers.JsonRpcProvider(GIL_PROVIDER_URL);
+  const gaussProvider = new ethers.providers.JsonRpcProvider(GAUSS_PROVIDER_URL);
   const mumbaiProvider = new ethers.providers.JsonRpcProvider(MUMBAI_PROVIDER_URL);
 
   // token warning stuff
@@ -263,7 +263,7 @@ export default function Gud() {
           hash: tx.hash,
           success: true,
           summary: `${formattedAmounts[Field.INPUT]} ${token.symbol} has been approved for bridging to the ${
-            chainId === ChainId.MUMBAI ? 'GIL' : 'MUMBAI'
+            chainId === ChainId.MUMBAI ? 'GAUSS' : 'MUMBAI'
           } network.`,
         },
       });
@@ -292,7 +292,7 @@ export default function Gud() {
             success: true,
             summary: `Bridged ${formattedAmounts[Field.INPUT]} ${token.symbol} to ${
               chainId === ChainId.MUMBAI ? 'GUD' : 'USDC'
-            } on the ${chainId === ChainId.MUMBAI ? 'GIL' : 'MUMBAI'} network.`,
+            } on the ${chainId === ChainId.MUMBAI ? 'GAUSS' : 'MUMBAI'} network.`,
           },
         });
         console.log('Transfer transaction receipt:', receipt);
@@ -351,8 +351,8 @@ export default function Gud() {
           }
         }
       } else if (token.symbol === 'GUD') {
-        // If they are not on GIL
-        if (chainId !== ChainId.GIL) {
+        // If they are not on GAUSS
+        if (chainId !== ChainId.GAUSS) {
           // Inform the user to switch networks
           alert('Please switch to Gauss Induction Labs network to access this page.');
 
@@ -362,7 +362,7 @@ export default function Gud() {
             library.provider
               .request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${ChainId.GIL.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
               })
               .catch((switchError) => {
                 if (switchError.code === 4902) {
@@ -372,15 +372,15 @@ export default function Gud() {
                       method: 'wallet_addEthereumChain',
                       params: [
                         {
-                          chainId: `0x${ChainId.GIL.toString(16)}`,
+                          chainId: `0x${ChainId.GAUSS.toString(16)}`,
                           chainName: 'Gauss Induction Labs',
                           nativeCurrency: {
                             name: 'GANG',
                             symbol: 'GANG',
                             decimals: 18,
                           },
-                          rpcUrls: ['https://rpc.giltestnet.com/'],
-                          blockExplorerUrls: ['https://explorer.giltestnet.com/'],
+                          rpcUrls: ['https://rpc.gaussgang.com/'],
+                          blockExplorerUrls: ['https://explorer.gaussgang.com/'],
                         },
                       ],
                     })
@@ -398,7 +398,7 @@ export default function Gud() {
   }, [location.pathname, chainId, library, token]);
 
   useEffect(() => {
-    if (chainId === ChainId.MUMBAI || chainId === ChainId.GIL) {
+    if (chainId === ChainId.MUMBAI || chainId === ChainId.GAUSS) {
       setChainSwitched(false);
     }
   }, [chainId]);
@@ -471,7 +471,7 @@ export default function Gud() {
   //     return () => {
   //       contract.off('LockGUD', onLockGUD);
   //     };
-  //   } else if (chainId === ChainId.GIL) {
+  //   } else if (chainId === ChainId.GAUSS) {
   //     const onBurnGUD = (sender, amount) => {
   //       console.log(`Token burned by ${sender} with amount ${amount}`);
   //       // Notify the user here, for example using a toast or a modal.
@@ -491,9 +491,9 @@ export default function Gud() {
     // Depending on the current chainId, get the other chain's provider and contract instance
     let otherProvider, otherContract;
     if (chainId === ChainId.MUMBAI) {
-      otherProvider = gilProvider;
+      otherProvider = gaussProvider;
       otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
-      // Listen to MintGUD event on Gauss chain (GIL)
+      // Listen to MintGUD event on Gauss chain (GAUSS)
       const onMintGUD = (recipient, amount) => {
         if (recipient.toLowerCase() === account.toLowerCase()) {
           // check if the event concerns the connected user
@@ -505,7 +505,7 @@ export default function Gud() {
       return () => {
         otherContract.off('MintGUD', onMintGUD);
       };
-    } else if (chainId === ChainId.GIL) {
+    } else if (chainId === ChainId.GAUSS) {
       otherProvider = mumbaiProvider;
       otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
       // Listen to UnlockGUD event on Mumbai
@@ -659,14 +659,14 @@ export default function Gud() {
               >
                 Please switch to Polygon Mumbai network
               </ButtonError>
-            ) : chainId !== ChainId.GIL && token.symbol === 'GUD' ? (
+            ) : chainId !== ChainId.GAUSS && token.symbol === 'GUD' ? (
               <ButtonError
                 onClick={() => {
                   if (library && library.provider.request) {
                     library.provider
                       .request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: `0x${ChainId.GIL.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                        params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
                       })
                       .catch((switchError) => {
                         if (switchError.code === 4902) {
@@ -676,15 +676,15 @@ export default function Gud() {
                               method: 'wallet_addEthereumChain',
                               params: [
                                 {
-                                  chainId: `0x${ChainId.GIL.toString(16)}`,
+                                  chainId: `0x${ChainId.GAUSS.toString(16)}`,
                                   chainName: 'Gauss Induction Labs',
                                   nativeCurrency: {
                                     name: 'GANG',
                                     symbol: 'GANG',
                                     decimals: 18,
                                   },
-                                  rpcUrls: ['https://rpc.giltestnet.com/'],
-                                  blockExplorerUrls: ['https://explorer.giltestnet.com/'],
+                                  rpcUrls: ['https://rpc.gaussgang.com/'],
+                                  blockExplorerUrls: ['https://explorer.gaussgang.com/'],
                                 },
                               ],
                             })

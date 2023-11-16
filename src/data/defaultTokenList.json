@@ -1,86 +1,38 @@
 {
-  "name": "NobleSwap GIL",
-  "timestamp": "2023-07-10T08:15:17.698Z",
+  "name": "NobleSwap Gauss",
+  "timestamp": "2023-11-16T07:08:08.533Z",
   "version": {
     "major": 1,
     "minor": 0,
-    "patch": 32
+    "patch": 3
   },
   "logoURI": "https://nobleswap.io/logo.png",
   "keywords": [
     "nobleswap",
-    "gil"
+    "gauss"
   ],
   "tokens": [
     {
       "name": "wGANG Token",
       "symbol": "wGANG",
-      "address": "0x624814Bca9A5d5620E350264f839b93f766B60a2",
-      "chainId": 1452,
+      "address": "0x26497607aAC75F1fFD7372FEDf6dBE5CFD8Ad92b",
+      "chainId": 1777,
       "decimals": 18,
       "logoURI": "https://nobleswap.io/logo.png"
     },
     {
-      "name": "OnlyBurns",
-      "symbol": "OBURN",
-      "address": "0xbd4B47be81Dc141469Ed9FcfDf26a764335FF23C",
-      "chainId": 1452,
+      "name": "INK Token",
+      "symbol": "INK",
+      "address": "0xe5e6dFe69aE1d74d506859E052ed7e1b5DbB9d38",
+      "chainId": 1777,
       "decimals": 18,
       "logoURI": "https://nobleswap.io/logo.png"
     },
     {
-      "name": "GUD Stable",
-      "symbol": "GUD",
-      "address": "0x341fc0Fd29AE6517E789961AFf52167898E136BE",
-      "chainId": 1452,
-      "decimals": 6,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "NobleSwap Token",
-      "symbol": "NOBLE",
-      "address": "0xC66edF8eCC0Fc72b10cB749146e9de9837C9359E",
-      "chainId": 1452,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "Ferret Token",
-      "symbol": "FTT",
-      "address": "0x0C9C5Ab0Bd51e703CFC5529A4F88174DD77CE073",
-      "chainId": 1452,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "Sloth Token",
-      "symbol": "SHT",
-      "address": "0x8AA6A202E5591d44D7cC5de573565FaBAe18e5C7",
-      "chainId": 1452,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "Cat Token",
-      "symbol": "CTT",
-      "address": "0xb943A963b98DffBef4A7fEbFEAa271e2E3E58AE2",
-      "chainId": 1452,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "Duck Token",
-      "symbol": "DKT",
-      "address": "0x4660df28e58625b08184A0AdB03A56bdd6274e77",
-      "chainId": 1452,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "Dog Token",
-      "symbol": "DGT",
-      "address": "0xBB9408a0e1D65986D2Aa2bdE370E2bD6aa279fa1",
-      "chainId": 1452,
+      "name": "PAPER Token",
+      "symbol": "PAPER",
+      "address": "0x18f0Cf904adaeaC2e6bfE573d61f51D4699De72d",
+      "chainId": 1777,
       "decimals": 18,
       "logoURI": "https://nobleswap.io/logo.png"
     }
