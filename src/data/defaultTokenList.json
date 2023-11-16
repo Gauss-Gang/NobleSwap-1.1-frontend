@@ -21,6 +21,22 @@
       "logoURI": "https://nobleswap.io/logo.png"
     },
     {
+      "name": "OnlyBurns",
+      "symbol": "OBURN",
+      "address": "0xbd4B47be81Dc141469Ed9FcfDf26a764335FF23C",
+      "chainId": 1452,
+      "decimals": 18,
+      "logoURI": "https://nobleswap.io/logo.png"
+    },
+    {
+      "name": "GUD Stable",
+      "symbol": "GUD",
+      "address": "0x341fc0Fd29AE6517E789961AFf52167898E136BE",
+      "chainId": 1452,
+      "decimals": 6,
+      "logoURI": "https://nobleswap.io/logo.png"
+    },
+    {
       "name": "NobleSwap Token",
       "symbol": "NOBLE",
       "address": "0xC66edF8eCC0Fc72b10cB749146e9de9837C9359E",

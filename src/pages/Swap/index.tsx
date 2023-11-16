@@ -40,9 +40,78 @@ import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
 import { ethers } from 'ethers';
 import burnSwapABI from './BurnSwapABI.json';
+import { useWeb3React } from '@web3-react/core';
+
+const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+      {
+        name: '_spender',
+        type: 'address',
+      },
+    ],
+    name: 'allowance',
+    outputs: [
+      {
+        name: 'remaining',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'approve',
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    type: 'function',
+  },
+];
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch();
+
+  const { library } = useWeb3React();
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -237,15 +306,25 @@ export default function Swap() {
   );
 
   const sellOBURN = async () => {
+    console.log('sellOBURN');
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        const contractAddress = '0xF8E29457B81FE49BE488DC18960774D47c68B3BE';
-        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-        const signer = provider.getSigner();
-        const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
+        const BurnSwap = new ethers.Contract(
+          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD',
+          burnSwapABI,
+          library!.getSigner()
+        );
+        const OnlyBurns = new ethers.Contract(
+          '0xbd4B47be81Dc141469Ed9FcfDf26a764335FF23C',
+          ERC20_ABI,
+          library!.getSigner()
+        );
         const amountOBURN = ethers.utils.parseEther(typedValue.toString());
         const amountGUD = ethers.utils.parseEther('0');
-        const slippage = 11;
+        const slippage = 17;
+        const approve = await OnlyBurns.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', amountOBURN);
+        const approveReceipt = await approve.wait();
+        console.log('approveReceipt', approveReceipt);
         const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountGUD, slippage);
         const tx = await BurnSwap.sellOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
@@ -260,15 +339,27 @@ export default function Swap() {
     }
   };
   const buyOBURN = async () => {
+    console.log('buyOBURN');
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        const contractAddress = '0x...';
-        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-        const signer = provider.getSigner();
-        const BurnSwap = new ethers.Contract(contractAddress, burnSwapABI, signer);
-        const amountOBURN = ethers.utils.parseEther('0');
-        const amountGUD = ethers.utils.parseEther(typedValue.toString());
-        const slippage = 1;
+        // Parse the original amount
+        const originalAmountOBURN = ethers.utils.parseEther(formattedAmounts[Field.OUTPUT]);
+
+        // Calculate 5% less
+        const fivePercentLess = originalAmountOBURN.mul(95).div(100);
+        const amountOBURN = fivePercentLess;
+        const amountGUD = ethers.utils.parseUnits('0', 6);
+        const approvalAmount = ethers.utils.parseUnits(typedValue.toString(), 6);
+        const slippage = 17;
+        const BurnSwap = new ethers.Contract(
+          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD', // old 0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246
+          burnSwapABI,
+          library!.getSigner()
+        );
+        const GUD = new ethers.Contract('0x341fc0Fd29AE6517E789961AFf52167898E136BE', ERC20_ABI, library!.getSigner());
+        const approve = await GUD.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', approvalAmount);
+        const approveReceipt = await approve.wait();
+        console.log('approveReceipt', approveReceipt);
         const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountGUD, slippage);
         const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountGUD, slippage, {
           gasLimit: gasEstimate,
@@ -458,9 +549,13 @@ export default function Swap() {
               </RowBetween>
             ) : (
               <ButtonError
-                onClick={() => {
+                onClick={async () => {
                   if (isExpertMode) {
                     handleSwap();
+                  } else if (currencies.INPUT?.symbol === 'OBURN') {
+                    await sellOBURN();
+                  } else if (currencies.OUTPUT?.symbol === 'OBURN') {
+                    await buyOBURN();
                   } else {
                     setSwapState({
                       tradeToConfirm: trade,

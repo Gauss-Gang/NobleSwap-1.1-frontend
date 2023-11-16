@@ -88,7 +88,7 @@
     "build": "react-scripts build --openssl-legacy-provider",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "postinstall": "rm -rf ./node_modules/@uniswap/sdk; cp -r ./forks/@uniswap/sdk ./node_modules/@uniswap/sdk",
+    "postinstall": "rmdir /s /q .\\node_modules\\@uniswap\\sdk && xcopy /e /i .\\forks\\@uniswap\\sdk .\\node_modules\\@uniswap\\sdk",
     "postinstall-windows": "rmdir /s /q .\\node_modules\\@uniswap\\sdk && xcopy /e /i .\\forks\\@uniswap\\sdk .\\node_modules\\@uniswap\\sdk",
     "deploy": "gh-pages -d build"
   },

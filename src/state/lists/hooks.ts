@@ -44,6 +44,7 @@ export type TokenAddressMap = Readonly<
 const EMPTY_LIST: TokenAddressMap = {
   [ChainId.KOVAN]: {},
   [ChainId.GIL]: {},
+  [ChainId.GAUSS]: {},
   [ChainId.POLYGON]: {},
   [ChainId.MUMBAI]: {},
   [ChainId.ROPSTEN]: {},
@@ -106,6 +107,7 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     5: { ...map1[5], ...map2[5] },
     42: { ...map1[42], ...map2[42] },
     1452: { ...map1[1452], ...map2[1452] },
+    1777: { ...map1[1777], ...map2[1777] },
     137: { ...map1[137], ...map2[137] },
     80001: { ...map1[80001], ...map2[80001] },
   };
