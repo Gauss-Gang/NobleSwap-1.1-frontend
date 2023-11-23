@@ -301,7 +301,7 @@ export function CurrencyInputPanelGud({
   showMaxButton,
   label,
   onCurrencySelect,
-  currency = '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
+  currency = '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
   disableCurrencySelect = false,
   hideBalance = false,
   pair = null, // used for double token logo

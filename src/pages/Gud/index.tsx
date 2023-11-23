@@ -103,9 +103,10 @@ const ERC20_ABI = [
   },
 ];
 
-const BRIDGE_ADDRESS = '0x771a7B1148420590774c5692F34cce3dC22e84f5';
-const GAUSS_PROVIDER_URL = 'https://rpc.gaussgang.com/';
-const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com/';
+const BRIDGE_ADDRESS = '0x419625Bf47bf4652839145d447C979814E283FAB';
+// const GAUSS_PROVIDER_URL = 'https://rpc.gaussgang.com/';
+// const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com/';
+// const POLYGON_PROVIDER_URL = 'https://polygon-rpc.com/';
 
 export default function Gud() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -116,8 +117,8 @@ export default function Gud() {
   // const [correctPaperBalance, setCorrectPaperBalance] = useState<boolean>(false);
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
-    symbol: 'USDC',
-    address: '0x607D772B71FF8480a6A0D9b148D951AEdc990769',
+    symbol: 'GUD',
+    address: '0x976cF0F344A41560a00447343Ff831E0FE619117',
   });
   const [allowance, setAllowance] = useState<string>('0');
   // const [paperBalance, setPaperBalance] = useState<string>('0');
@@ -128,8 +129,9 @@ export default function Gud() {
 
   const addPopup = useAddPopup();
 
-  const gaussProvider = new ethers.providers.JsonRpcProvider(GAUSS_PROVIDER_URL);
-  const mumbaiProvider = new ethers.providers.JsonRpcProvider(MUMBAI_PROVIDER_URL);
+  // const gaussProvider = new ethers.providers.JsonRpcProvider(GAUSS_PROVIDER_URL);
+  // const mumbaiProvider = new ethers.providers.JsonRpcProvider(MUMBAI_PROVIDER_URL);
+  // const polygonProvider = new ethers.providers.JsonRpcProvider(POLYGON_PROVIDER_URL);
 
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -263,7 +265,7 @@ export default function Gud() {
           hash: tx.hash,
           success: true,
           summary: `${formattedAmounts[Field.INPUT]} ${token.symbol} has been approved for bridging to the ${
-            chainId === ChainId.MUMBAI ? 'GAUSS' : 'MUMBAI'
+            chainId === ChainId.POLYGON ? 'GAUSS' : 'POLYGON'
           } network.`,
         },
       });
@@ -291,8 +293,8 @@ export default function Gud() {
             hash: receipt.transactionHash,
             success: true,
             summary: `Bridged ${formattedAmounts[Field.INPUT]} ${token.symbol} to ${
-              chainId === ChainId.MUMBAI ? 'GUD' : 'USDC'
-            } on the ${chainId === ChainId.MUMBAI ? 'GAUSS' : 'MUMBAI'} network.`,
+              chainId === ChainId.POLYGON ? 'GUD' : 'USDC'
+            } on the ${chainId === ChainId.POLYGON ? 'GAUSS' : 'POLYGON'} network.`,
           },
         });
         console.log('Transfer transaction receipt:', receipt);
@@ -309,9 +311,9 @@ export default function Gud() {
     if (location.pathname === '/gud') {
       if (token.symbol === 'USDC') {
         // If they are not on POLYGON or MUMBAI
-        if (chainId !== ChainId.MUMBAI) {
+        if (chainId !== ChainId.POLYGON) {
           // Inform the user to switch networks
-          alert('Please switch to Polygon Mumbai network to access this page.');
+          alert('Please switch to Polygon Mainnet network to access this page.');
 
           // Optional: If you have permissions, you can programmatically switch the network for the user
           if (library && library.provider.request) {
@@ -319,7 +321,7 @@ export default function Gud() {
             library.provider
               .request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                params: [{ chainId: `0x${ChainId.POLYGON.toString(16)}` }], // This switches to Polygon, but you can set up logic for POLYGON as well
               })
               .catch((switchError) => {
                 if (switchError.code === 4902) {
@@ -329,15 +331,15 @@ export default function Gud() {
                       method: 'wallet_addEthereumChain',
                       params: [
                         {
-                          chainId: `0x${ChainId.MUMBAI.toString(16)}`,
-                          chainName: 'Mumbai',
+                          chainId: `0x${ChainId.POLYGON.toString(16)}`,
+                          chainName: 'Polygon Mainnet',
                           nativeCurrency: {
                             name: 'Matic',
                             symbol: 'MATIC',
                             decimals: 18,
                           },
-                          rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-                          blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+                          rpcUrls: ['https://polygon-rpc.com/'],
+                          blockExplorerUrls: ['https://polygonscan.com/'],
                         },
                       ],
                     })
@@ -354,7 +356,7 @@ export default function Gud() {
         // If they are not on GAUSS
         if (chainId !== ChainId.GAUSS) {
           // Inform the user to switch networks
-          alert('Please switch to Gauss Induction Labs network to access this page.');
+          alert('Please switch to Gauss Mainnet network to access this page.');
 
           // Optional: If you have permissions, you can programmatically switch the network for the user
           if (library && library.provider.request) {
@@ -362,7 +364,7 @@ export default function Gud() {
             library.provider
               .request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for POLYGON as well
               })
               .catch((switchError) => {
                 if (switchError.code === 4902) {
@@ -373,7 +375,7 @@ export default function Gud() {
                       params: [
                         {
                           chainId: `0x${ChainId.GAUSS.toString(16)}`,
-                          chainName: 'Gauss Induction Labs',
+                          chainName: 'Gauss Chain Mainnet',
                           nativeCurrency: {
                             name: 'GANG',
                             symbol: 'GANG',
@@ -398,7 +400,7 @@ export default function Gud() {
   }, [location.pathname, chainId, library, token]);
 
   useEffect(() => {
-    if (chainId === ChainId.MUMBAI || chainId === ChainId.GAUSS) {
+    if (chainId === ChainId.POLYGON || chainId === ChainId.GAUSS) {
       setChainSwitched(false);
     }
   }, [chainId]);
@@ -458,7 +460,7 @@ export default function Gud() {
   //   // Create a contract instance
   //   const contract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, library);
 
-  //   if (chainId === ChainId.MUMBAI) {
+  //   if (chainId === ChainId.POLYGON) {
   //     // Listen to LockGUD event
   //     const onLockGUD = (sender, amount) => {
   //       console.log(`Token locked by ${sender} with amount ${amount}`);
@@ -487,42 +489,42 @@ export default function Gud() {
   // }, [chainId, library]);
 
   // DOESN'T WORK - listening to events on different chains (chain X listening to events on chain Y)
-  useEffect(() => {
-    // Depending on the current chainId, get the other chain's provider and contract instance
-    let otherProvider, otherContract;
-    if (chainId === ChainId.MUMBAI) {
-      otherProvider = gaussProvider;
-      otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
-      // Listen to MintGUD event on Gauss chain (GAUSS)
-      const onMintGUD = (recipient, amount) => {
-        if (recipient.toLowerCase() === account.toLowerCase()) {
-          // check if the event concerns the connected user
-          console.log(`Token minted for ${recipient} with amount ${amount} on Gauss chain.`);
-          // Notify the user here.
-        }
-      };
-      otherContract.on('MintGUD', onMintGUD);
-      return () => {
-        otherContract.off('MintGUD', onMintGUD);
-      };
-    } else if (chainId === ChainId.GAUSS) {
-      otherProvider = mumbaiProvider;
-      otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
-      // Listen to UnlockGUD event on Mumbai
-      const onUnlockGUD = (recipient, amount) => {
-        if (recipient.toLowerCase() === account.toLowerCase()) {
-          // check if the event concerns the connected user
-          console.log(`Token unlocked for ${recipient} with amount ${amount} on Mumbai.`);
-          // Notify the user here.
-        }
-      };
-      otherContract.on('UnlockGUD', onUnlockGUD);
+  // useEffect(() => {
+  //   // Depending on the current chainId, get the other chain's provider and contract instance
+  //   let otherProvider, otherContract;
+  //   if (chainId === ChainId.POLYGON) {
+  //     otherProvider = gaussProvider;
+  //     otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
+  //     // Listen to MintGUD event on Gauss chain (GAUSS)
+  //     const onMintGUD = (recipient, amount) => {
+  //       if (recipient.toLowerCase() === account.toLowerCase()) {
+  //         // check if the event concerns the connected user
+  //         console.log(`Token minted for ${recipient} with amount ${amount} on Gauss chain.`);
+  //         // Notify the user here.
+  //       }
+  //     };
+  //     otherContract.on('MintGUD', onMintGUD);
+  //     return () => {
+  //       otherContract.off('MintGUD', onMintGUD);
+  //     };
+  //   } else if (chainId === ChainId.GAUSS) {
+  //     otherProvider = polygonProvider;
+  //     otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
+  //     // Listen to UnlockGUD event on Mumbai
+  //     const onUnlockGUD = (recipient, amount) => {
+  //       if (recipient.toLowerCase() === account.toLowerCase()) {
+  //         // check if the event concerns the connected user
+  //         console.log(`Token unlocked for ${recipient} with amount ${amount} on POLYGON.`);
+  //         // Notify the user here.
+  //       }
+  //     };
+  //     otherContract.on('UnlockGUD', onUnlockGUD);
 
-      return () => {
-        otherContract.off('UnlockGUD', onUnlockGUD);
-      };
-    }
-  }, [chainId, account]);
+  //     return () => {
+  //       otherContract.off('UnlockGUD', onUnlockGUD);
+  //     };
+  //   }
+  // }, [chainId, account]);
 
   return (
     <>
@@ -618,14 +620,14 @@ export default function Gud() {
                 <span>Chain switch in progress...</span>&nbsp;
                 <Loader stroke="#A6AAB5" />
               </ButtonError>
-            ) : chainId !== ChainId.MUMBAI && token.symbol === 'USDC' ? (
+            ) : chainId !== ChainId.POLYGON && token.symbol === 'USDC' ? (
               <ButtonError
                 onClick={() => {
                   if (library && library.provider.request) {
                     library.provider
                       .request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: `0x${ChainId.MUMBAI.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                        params: [{ chainId: `0x${ChainId.POLYGON.toString(16)}` }], // This switches to Polygon, but you can set up logic for POLYGON as well
                       })
                       .catch((switchError) => {
                         if (switchError.code === 4902) {
@@ -635,15 +637,15 @@ export default function Gud() {
                               method: 'wallet_addEthereumChain',
                               params: [
                                 {
-                                  chainId: `0x${ChainId.MUMBAI.toString(16)}`,
-                                  chainName: 'Mumbai',
+                                  chainId: `0x${ChainId.POLYGON.toString(16)}`,
+                                  chainName: 'Polygon Mainnet',
                                   nativeCurrency: {
                                     name: 'Matic',
                                     symbol: 'MATIC',
                                     decimals: 18,
                                   },
-                                  rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-                                  blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+                                  rpcUrls: ['https://polygon-rpc.com/'],
+                                  blockExplorerUrls: ['https://polygonscan.com/'],
                                 },
                               ],
                             })
@@ -657,7 +659,7 @@ export default function Gud() {
                   }
                 }}
               >
-                Please switch to Polygon Mumbai network
+                Please switch to the Polygon Mainnet network
               </ButtonError>
             ) : chainId !== ChainId.GAUSS && token.symbol === 'GUD' ? (
               <ButtonError
@@ -666,7 +668,7 @@ export default function Gud() {
                     library.provider
                       .request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for Mumbai as well
+                        params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for POLYGON as well
                       })
                       .catch((switchError) => {
                         if (switchError.code === 4902) {
@@ -698,7 +700,7 @@ export default function Gud() {
                   }
                 }}
               >
-                Please switch to Gauss Induction Labs network
+                Please switch to the Gauss Mainnet network
               </ButtonError>
             ) : formattedAmounts[Field.INPUT] === '' || Number(formattedAmounts[Field.INPUT]) > Number(balance) ? (
               <ButtonError disabled>Please enter valid amount</ButtonError>
