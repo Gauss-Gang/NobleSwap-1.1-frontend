@@ -34,7 +34,7 @@ export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
 
-export const GUD = new Token(ChainId.GAUSS, '0x976cF0F344A41560a00447343Ff831E0FE619117', 6, 'GUD', 'Gauss Stable');
+export const GUD = new Token(ChainId.GAUSS, '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226', 6, 'GUD', 'Gauss Stable');
 
 // Testnet
 // export const GUD = new Token(ChainId.GIL, '0x976cF0F344A41560a00447343Ff831E0FE619117', 6, 'GUD', 'Gauss Stable');
@@ -63,7 +63,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
   [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
-  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS]], // Add GUD back here
+  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS], GUD],
 };
 
 /**

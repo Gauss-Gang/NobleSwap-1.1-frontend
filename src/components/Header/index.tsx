@@ -242,8 +242,8 @@ export const StyledMenuButton = styled.button`
 `;
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.GIL]: 'GIL',
   [ChainId.GAUSS]: 'Gauss',
+  [ChainId.GIL]: 'GIL',
   [ChainId.POLYGON]: 'Polygon',
   [ChainId.MUMBAI]: 'Mumbai',
   [ChainId.ROPSTEN]: 'Ropsten',

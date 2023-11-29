@@ -356,7 +356,7 @@ export default function Swap() {
           burnSwapABI,
           library!.getSigner()
         );
-        const GUD = new ethers.Contract('0x976cF0F344A41560a00447343Ff831E0FE619117', ERC20_ABI, library!.getSigner());
+        const GUD = new ethers.Contract('0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226', ERC20_ABI, library!.getSigner());
         const approve = await GUD.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', approvalAmount);
         const approveReceipt = await approve.wait();
         console.log('approveReceipt', approveReceipt);

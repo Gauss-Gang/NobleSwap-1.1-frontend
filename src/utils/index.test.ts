@@ -29,7 +29,7 @@ describe('utils', () => {
       expect(getEtherscanLink(3, 'abc', 'address')).toEqual('https://ropsten.etherscan.io/address/abc');
     });
     it('enum', () => {
-      expect(getEtherscanLink(ChainId.GIL, 'abc', 'address')).toEqual('https://GIL.etherscan.io/address/abc');
+      expect(getEtherscanLink(ChainId.GIL, 'abc', 'address')).toEqual('https://GIL.explorer.giltestnet.com/address/abc');
     });
   });
 

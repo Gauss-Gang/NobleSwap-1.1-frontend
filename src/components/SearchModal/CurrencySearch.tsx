@@ -306,7 +306,7 @@ export function CurrencySearchGUD({
   const tokens = [
     {
       symbol: 'GUD',
-      address: '0x976cF0F344A41560a00447343Ff831E0FE619117',
+      address: '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226',
     },
     {
       symbol: 'USDC',

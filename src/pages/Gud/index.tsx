@@ -103,7 +103,7 @@ const ERC20_ABI = [
   },
 ];
 
-const BRIDGE_ADDRESS = '0x419625Bf47bf4652839145d447C979814E283FAB';
+const BRIDGE_ADDRESS = '0x7feDB13B216ebF1214504B07B791dD7f79531057';
 // const GAUSS_PROVIDER_URL = 'https://rpc.gaussgang.com/';
 // const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com/';
 // const POLYGON_PROVIDER_URL = 'https://polygon-rpc.com/';
@@ -118,7 +118,7 @@ export default function Gud() {
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
     symbol: 'GUD',
-    address: '0x976cF0F344A41560a00447343Ff831E0FE619117',
+    address: '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226',
   });
   const [allowance, setAllowance] = useState<string>('0');
   // const [paperBalance, setPaperBalance] = useState<string>('0');
