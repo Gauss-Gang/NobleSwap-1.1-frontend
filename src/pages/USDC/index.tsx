@@ -103,7 +103,7 @@ const ERC20_ABI = [
   },
 ];
 
-const BRIDGE_ADDRESS = 'TODO';
+const BRIDGE_ADDRESS = '0x3C5c39efb1E8d4d65c5Ce99672e0C53b99377975';
 
 
 export default function USDC() {
@@ -116,7 +116,7 @@ export default function USDC() {
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
     symbol: 'USDC.pol',
-    address: 'TODO',
+    address: '0x2baFd05252ADcA1143b77a88A72E1022B59ad379',
   });
   const [allowance, setAllowance] = useState<string>('0');
   // const [paperBalance, setPaperBalance] = useState<string>('0');

@@ -306,7 +306,7 @@ export function CurrencySearchUSDC({
   const tokens = [
     {
       symbol: 'USDC.pol',
-      address: '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226',
+      address: '0x2baFd05252ADcA1143b77a88A72E1022B59ad379',
     },
     {
       symbol: 'USDC',
