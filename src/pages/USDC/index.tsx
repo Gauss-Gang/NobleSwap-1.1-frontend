@@ -35,7 +35,7 @@ import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Contract, ethers, providers } from 'ethers';
 import { parseUnits } from '@ethersproject/units';
-import BRIDGE_ABI from './USDCBridgeServiceABI.json';
+import BRIDGE_ABI from './USDCpolBridgeServiceABI.json';
 
 const ERC20_ABI = [
   {
