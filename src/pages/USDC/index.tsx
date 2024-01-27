@@ -114,8 +114,8 @@ export default function USDC() {
   // const [correctPaperBalance, setCorrectPaperBalance] = useState<boolean>(false);
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
-    symbol: 'USDC.pol',
-    address: '0x2baFd05252ADcA1143b77a88A72E1022B59ad379',
+    symbol: 'USDC',
+    address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
   });
   const [allowance, setAllowance] = useState<string>('0');
   // const [paperBalance, setPaperBalance] = useState<string>('0');
@@ -302,7 +302,7 @@ export default function USDC() {
   useEffect(() => {
     // Check if the user is on the /usdc page
     if (location.pathname === '/usdc') {
-      if (token.symbol === 'USDC.pol') {
+      if (token.symbol === 'USDC') {
         // If they are not on POLYGON or MUMBAI
         if (chainId !== ChainId.POLYGON) {
           // Inform the user to switch networks
@@ -557,7 +557,7 @@ export default function USDC() {
               >
                 Please switch to the Polygon Mainnet network
               </ButtonError>
-            ) : chainId !== ChainId.GAUSS && token.symbol === 'USDC.g' ? (
+            ) : chainId !== ChainId.GAUSS && token.symbol === 'USDC.pol' ? (
               <ButtonError
                 onClick={() => {
                   if (library && library.provider.request) {
