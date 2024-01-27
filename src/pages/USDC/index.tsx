@@ -423,102 +423,6 @@ export default function USDC() {
   }, [allowance, formattedAmounts[Field.INPUT]]);
   // end fetching allowance
 
-  // fetch PAPER BALANCE
-  // useEffect(() => {
-  //   if (account && library) {
-  //     const tokenContract = new Contract('0xBB9408a0e1D65986D2Aa2bdE370E2bD6aa279fa1', ERC20_ABI, library); // Dog Token ($DGT) address for testing purposes
-
-  //     const fetchBalance = async () => {
-  //       try {
-  //         const result = await tokenContract.balanceOf(account);
-  //         setPaperBalance(result.toString());
-  //       } catch (err) {
-  //         console.error('Error fetching allowance:', err);
-  //       }
-  //     };
-
-  //     fetchBalance();
-  //   }
-  // }, [account, library, formattedAmounts[Field.INPUT]]);
-
-  // useEffect(() => {
-  //   console.log('Amount:', 100000);
-  //   const formattedBalance = Number(paperBalance) / 10 ** 18;
-  //   console.log('Formatted balance:', formattedBalance);
-  //   formattedBalance < 100000 ? setCorrectPaperBalance(false) : setCorrectPaperBalance(true);
-  // }, [allowance, formattedAmounts[Field.INPUT]]);
-  // end fetch PAPER BALANCE
-
-  // WORKS - listening to events on the same chain (chain X listening to events on chain X)
-  // useEffect(() => {
-  //   // Create a contract instance
-  //   const contract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, library);
-
-  //   if (chainId === ChainId.POLYGON) {
-  //     // Listen to LockUSDC event
-  //     const onLockUSDC = (sender, amount) => {
-  //       console.log(`Token locked by ${sender} with amount ${amount}`);
-  //       // Notify the user here, for example using a toast or a modal.
-  //     };
-
-  //     contract.on('LockUSDC', onLockUSDC);
-
-  //     // Cleanup listener when component is unmounted
-  //     return () => {
-  //       contract.off('LockUSDC', onLockUSDC);
-  //     };
-  //   } else if (chainId === ChainId.GAUSS) {
-  //     const onBurnUSDC = (sender, amount) => {
-  //       console.log(`Token burned by ${sender} with amount ${amount}`);
-  //       // Notify the user here, for example using a toast or a modal.
-  //     };
-
-  //     contract.on('BurnUSDC', onBurnUSDC);
-
-  //     // Cleanup listener when component is unmounted
-  //     return () => {
-  //       contract.off('BurnUSDC', onBurnUSDC);
-  //     };
-  //   }
-  // }, [chainId, library]);
-
-  // DOESN'T WORK - listening to events on different chains (chain X listening to events on chain Y)
-  // useEffect(() => {
-  //   // Depending on the current chainId, get the other chain's provider and contract instance
-  //   let otherProvider, otherContract;
-  //   if (chainId === ChainId.POLYGON) {
-  //     otherProvider = gaussProvider;
-  //     otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
-  //     // Listen to MintUSDC event on Gauss chain (GAUSS)
-  //     const onMintUSDC = (recipient, amount) => {
-  //       if (recipient.toLowerCase() === account.toLowerCase()) {
-  //         // check if the event concerns the connected user
-  //         console.log(`Token minted for ${recipient} with amount ${amount} on Gauss chain.`);
-  //         // Notify the user here.
-  //       }
-  //     };
-  //     otherContract.on('MintUSDC', onMintUSDC);
-  //     return () => {
-  //       otherContract.off('MintUSDC', onMintUSDC);
-  //     };
-  //   } else if (chainId === ChainId.GAUSS) {
-  //     otherProvider = polygonProvider;
-  //     otherContract = new Contract(BRIDGE_ADDRESS, BRIDGE_ABI, otherProvider);
-  //     // Listen to UnlockUSDC event on Mumbai
-  //     const onUnlockUSDC = (recipient, amount) => {
-  //       if (recipient.toLowerCase() === account.toLowerCase()) {
-  //         // check if the event concerns the connected user
-  //         console.log(`Token unlocked for ${recipient} with amount ${amount} on POLYGON.`);
-  //         // Notify the user here.
-  //       }
-  //     };
-  //     otherContract.on('UnlockUSDC', onUnlockUSDC);
-
-  //     return () => {
-  //       otherContract.off('UnlockUSDC', onUnlockUSDC);
-  //     };
-  //   }
-  // }, [chainId, account]);
 
   return (
     <>
@@ -529,7 +433,7 @@ export default function USDC() {
       />
       <SwapPoolTabs active={'usdcg'} />
       <AppBody>
-        <USDCgHeader expressMode={expressMode} setExpressMode={setExpressMode} />
+        <USDCHeader expressMode={expressMode} setExpressMode={setExpressMode} />
         <Wrapper id="usdcg-page">
           {/* <ConfirmSwapModal
             isOpen={showConfirm}
@@ -546,7 +450,7 @@ export default function USDC() {
           /> */}
 
           <AutoColumn gap={'md'}>
-            <CurrencyInputPanelUSDCg
+            <CurrencyInputPanelUSDC
               label={'Input value:'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}

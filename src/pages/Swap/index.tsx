@@ -39,7 +39,6 @@ import AppBody from '../AppBody';
 import { ClickableText } from '../Pool/styleds';
 import Loader from '../../components/Loader';
 import { ethers } from 'ethers';
-import burnSwapABI from './BurnSwapABI.json';
 import { useWeb3React } from '@web3-react/core';
 
 const ERC20_ABI = [
@@ -305,75 +304,6 @@ export default function Swap() {
     [onCurrencySelection]
   );
 
-  const sellOBURN = async () => {
-    console.log('sellOBURN');
-    if (typeof window !== 'undefined' && window.ethereum) {
-      try {
-        const BurnSwap = new ethers.Contract(
-          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD',
-          burnSwapABI,
-          library!.getSigner()
-        );
-        const OnlyBurns = new ethers.Contract(
-          '0xbd4B47be81Dc141469Ed9FcfDf26a764335FF23C',
-          ERC20_ABI,
-          library!.getSigner()
-        );
-        const amountOBURN = ethers.utils.parseEther(typedValue.toString());
-        const amountGUD = ethers.utils.parseEther('0');
-        const slippage = 17;
-        const approve = await OnlyBurns.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', amountOBURN);
-        const approveReceipt = await approve.wait();
-        console.log('approveReceipt', approveReceipt);
-        const gasEstimate = await BurnSwap.estimateGas.sellOBURN(amountOBURN, amountGUD, slippage);
-        const tx = await BurnSwap.sellOBURN(amountOBURN, amountGUD, slippage, {
-          gasLimit: gasEstimate,
-        });
-        const receipt = await tx.wait();
-        console.log('Transaction was successful, receipt:', receipt);
-      } catch (error) {
-        console.log('An error occurred:', error);
-      }
-    } else {
-      console.log('No Web3 provider found.');
-    }
-  };
-  const buyOBURN = async () => {
-    console.log('buyOBURN');
-    if (typeof window !== 'undefined' && window.ethereum) {
-      try {
-        // Parse the original amount
-        const originalAmountOBURN = ethers.utils.parseEther(formattedAmounts[Field.OUTPUT]);
-
-        // Calculate 5% less
-        const fivePercentLess = originalAmountOBURN.mul(95).div(100);
-        const amountOBURN = fivePercentLess;
-        const amountGUD = ethers.utils.parseUnits('0', 6);
-        const approvalAmount = ethers.utils.parseUnits(typedValue.toString(), 6);
-        const slippage = 17;
-        const BurnSwap = new ethers.Contract(
-          '0xb4C1C1737d83401e2661a0801BeB820429aD89aD', // old 0xc12ab58aAa9eE803bEb6421fb76DA15Da930E246
-          burnSwapABI,
-          library!.getSigner()
-        );
-        const GUD = new ethers.Contract('0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226', ERC20_ABI, library!.getSigner());
-        const approve = await GUD.approve('0xb4C1C1737d83401e2661a0801BeB820429aD89aD', approvalAmount);
-        const approveReceipt = await approve.wait();
-        console.log('approveReceipt', approveReceipt);
-        const gasEstimate = await BurnSwap.estimateGas.purchaseOBURN(amountOBURN, amountGUD, slippage);
-        const tx = await BurnSwap.purchaseOBURN(amountOBURN, amountGUD, slippage, {
-          gasLimit: gasEstimate,
-        });
-        const receipt = await tx.wait();
-        console.log('Transaction was successful, receipt:', receipt);
-      } catch (error) {
-        console.log('An error occurred:', error);
-      }
-    } else {
-      console.log('No Web3 provider found.');
-    }
-  };
-
   return (
     <>
       <TokenWarningModal
@@ -519,10 +449,6 @@ export default function Swap() {
                   onClick={async () => {
                     if (isExpertMode) {
                       handleSwap();
-                    } else if (currencies.INPUT?.symbol === 'OBURN') {
-                      await sellOBURN();
-                    } else if (currencies.OUTPUT?.symbol === 'OBURN') {
-                      await buyOBURN();
                     } else {
                       setSwapState({
                         tradeToConfirm: trade,
@@ -552,10 +478,6 @@ export default function Swap() {
                 onClick={async () => {
                   if (isExpertMode) {
                     handleSwap();
-                  } else if (currencies.INPUT?.symbol === 'OBURN') {
-                    await sellOBURN();
-                  } else if (currencies.OUTPUT?.symbol === 'OBURN') {
-                    await buyOBURN();
                   } else {
                     setSwapState({
                       tradeToConfirm: trade,
