@@ -20,8 +20,8 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useTheme from 'hooks/useTheme';
 import ImportRow from './ImportRow';
 import { Edit } from 'react-feather';
-import { ButtonOutlined, ButtonOutlinedGUD, ButtonPrimary } from 'components/Button';
-import { CurrencyLogoGud } from 'components/CurrencyLogo';
+import { ButtonOutlined, ButtonOutlinedUSDC, ButtonPrimary } from 'components/Button';
+import { CurrencyLogoUSDC } from 'components/CurrencyLogo';
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -286,7 +286,7 @@ export function CurrencySearch({
   );
 }
 /* eslint-disable react/prop-types */
-export function CurrencySearchGUD({
+export function CurrencySearchUSDC({
   selectedCurrency,
   onCurrencySelect,
   otherSelectedCurrency,
@@ -305,7 +305,7 @@ export function CurrencySearchGUD({
   const currency = { decimals: 18, symbol: 'GANG', name: 'GANG' };
   const tokens = [
     {
-      symbol: 'GUD',
+      symbol: 'USDC.pol',
       address: '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226',
     },
     {
@@ -439,7 +439,7 @@ export function CurrencySearchGUD({
       <Separator />
       <Column style={{ padding: '20px', height: '100%' }}>
         <div style={{ marginBottom: '0.5rem' }}>
-          <ButtonOutlinedGUD
+          <ButtonOutlinedUSDC
             onClick={() => {
               setToken(tokens[1]);
               onDismiss();
@@ -448,10 +448,10 @@ export function CurrencySearchGUD({
             <img src="/images/usdc.png" alt="usdc" width="24px" height="24px" />
             &nbsp;
             <span>USDC</span>
-          </ButtonOutlinedGUD>
+          </ButtonOutlinedUSDC>
         </div>
         <div>
-          <ButtonOutlinedGUD
+          <ButtonOutlinedUSDC
             onClick={() => {
               setToken(tokens[0]);
               onDismiss();
@@ -459,8 +459,8 @@ export function CurrencySearchGUD({
           >
             <img src="/images/usdc.png" alt="usdc" width="24px" height="24px" />
             &nbsp;
-            <span>GUD</span>
-          </ButtonOutlinedGUD>
+            <span>USDC</span>
+          </ButtonOutlinedUSDC>
         </div>
       </Column>
     </ContentWrapper>

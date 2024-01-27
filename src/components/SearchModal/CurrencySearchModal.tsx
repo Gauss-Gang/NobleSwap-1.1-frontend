@@ -2,7 +2,7 @@ import { Currency, Token } from '@uniswap/sdk';
 import React, { useCallback, useEffect, useState } from 'react';
 import useLast from '../../hooks/useLast';
 import Modal from '../Modal';
-import { CurrencySearch, CurrencySearchGUD } from './CurrencySearch';
+import { CurrencySearch, CurrencySearchUSDC } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import usePrevious from 'hooks/usePrevious';
 import Manage from './Manage';
@@ -103,7 +103,7 @@ export default function CurrencySearchModal({
   );
 }
 /* eslint-disable react/prop-types */
-export function CurrencySearchModalGUD({
+export function CurrencySearchModalUSDC({
   isOpen,
   onDismiss,
   onCurrencySelect,
@@ -144,7 +144,7 @@ export function CurrencySearchModalGUD({
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
-      <CurrencySearchGUD
+      <CurrencySearchUSDC
         isOpen={isOpen}
         onDismiss={onDismiss}
         onCurrencySelect={handleCurrencySelect}

@@ -27,7 +27,7 @@ export function getNetworkLibrary(): Web3Provider {
 
 // const pathname = window.location.pathname;
 
-// const supportedChainIds = pathname === '/gud' ? [137, 80001] : [1452];
+// const supportedChainIds = pathname === '/usdc' ? [137, 80001] : [1452];
 
 // export const injected = new InjectedConnector({ supportedChainIds });
 // original

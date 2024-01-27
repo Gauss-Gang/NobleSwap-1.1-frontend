@@ -142,7 +142,7 @@ export const ButtonOutlined = styled(Base)`
   }
 `;
 
-export const ButtonOutlinedGUD = styled(Base)`
+export const ButtonOutlinedUSDC = styled(Base)`
   border: 1px solid ${({ theme }) => theme.bg2};
   background-color: transparent;
   color: ${({ theme }) => theme.text1};

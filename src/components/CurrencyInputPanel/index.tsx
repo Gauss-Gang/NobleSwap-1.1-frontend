@@ -3,8 +3,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { useCurrencyBalance } from '../../state/wallet/hooks';
-import CurrencySearchModal, { CurrencySearchModalGUD } from '../SearchModal/CurrencySearchModal';
-import CurrencyLogo, { CurrencyLogoGud } from '../CurrencyLogo';
+import CurrencySearchModal, { CurrencySearchModalUSDC } from '../SearchModal/CurrencySearchModal';
+import CurrencyLogo, { CurrencyLogoUSDC } from '../CurrencyLogo';
 import DoubleCurrencyLogo from '../DoubleLogo';
 import { RowBetween } from '../Row';
 import { TYPE } from '../../theme';
@@ -68,7 +68,7 @@ const CurrencySelect = styled.button`
   }
 `;
 
-const CurrencySelectGud = styled.button`
+const CurrencySelectUSDC = styled.button`
   align-items: center;
   height: 2.2rem;
   font-size: 20px;
@@ -294,7 +294,7 @@ export default function CurrencyInputPanel({
   );
 }
 /* eslint-disable react/prop-types */
-export function CurrencyInputPanelGud({
+export function CurrencyInputPanelUSDC({
   value,
   onUserInput,
   onMax,
@@ -334,7 +334,7 @@ export function CurrencyInputPanelGud({
       const fetchBalance = async () => {
         try {
           const result = await tokenContract.balanceOf(account);
-          const formattedResult = formatUnits(result, 6); // Assuming your token has 18 decimals, adjust if different
+          const formattedResult = formatUnits(result, 6);
           setBalance(formattedResult);
         } catch (err) {
           console.error('Error fetching balance:', err);
@@ -386,7 +386,7 @@ export function CurrencyInputPanelGud({
               )}
             </>
           )}
-          <CurrencySelectGud
+          <CurrencySelectUSDC
             className="open-currency-select-button"
             onClick={() => {
               if (!disableCurrencySelect) {
@@ -398,7 +398,7 @@ export function CurrencyInputPanelGud({
               {pair ? (
                 <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
               ) : currency ? (
-                <CurrencyLogoGud currency={currency} size={'24px'} />
+                <CurrencyLogoUSDC currency={currency} size={'24px'} />
               ) : null}
               {pair ? (
                 <StyledTokenName className="pair-name-container">
@@ -411,11 +411,11 @@ export function CurrencyInputPanelGud({
               )}
               {!disableCurrencySelect && <StyledDropDown />}
             </Aligner>
-          </CurrencySelectGud>
+          </CurrencySelectUSDC>
         </InputRow>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (
-        <CurrencySearchModalGUD
+        <CurrencySearchModalUSDC
           isOpen={modalOpen}
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}

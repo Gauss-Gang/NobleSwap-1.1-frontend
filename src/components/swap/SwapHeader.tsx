@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Settings, { SettingsGud } from '../Settings';
+import Settings, { SettingsUSDC } from '../Settings';
 import { RowBetween } from '../Row';
 import { TYPE } from '../../theme';
 
@@ -23,12 +23,12 @@ export default function SwapHeader() {
 }
 
 /* eslint-disable react/prop-types */
-export function GudHeader({ expressMode, setExpressMode }) {
+export function USDCHeader({ expressMode, setExpressMode }) {
   return (
     <StyledSwapHeader>
       <RowBetween>
-        <TYPE.black fontWeight={500}>GUD Bridge</TYPE.black>
-        <SettingsGud expressMode={expressMode} setExpressMode={setExpressMode} />
+        <TYPE.black fontWeight={500}>USDC Bridge</TYPE.black>
+        <SettingsUSDC expressMode={expressMode} setExpressMode={setExpressMode} />
       </RowBetween>
     </StyledSwapHeader>
   );

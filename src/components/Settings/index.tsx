@@ -248,7 +248,7 @@ export default function SettingsTab() {
 }
 
 /* eslint-disable react/prop-types */
-export function SettingsGud({ setExpressMode, expressMode }) {
+export function SettingsUSDC({ setExpressMode, expressMode }) {
   const node = useRef<HTMLDivElement>();
   const open = useModalOpen(ApplicationModal.SETTINGS);
   const toggle = useToggleSettingsMenu();
@@ -335,7 +335,7 @@ export function SettingsGud({ setExpressMode, expressMode }) {
                 <QuestionHelper text="Faster bridging process - bigger fee." />
               </RowFixed>
               <Toggle
-                id="toggle-express-mode-button-gud"
+                id="toggle-express-mode-button-usdc"
                 isActive={expressMode}
                 toggle={() => setExpressMode(!expressMode)}
               />

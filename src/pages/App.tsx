@@ -21,7 +21,7 @@ import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from '
 import Logo from '../assets/images/logo.png';
 import NobleswapBackground from '../assets/images/nobleswap_bg.png';
 import './globals.css';
-import Gud from './Gud';
+import USDC from './usdc';
 
 const AppWrapper = styled.div`
   min-height: 100vh;
@@ -85,7 +85,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/gud" component={Gud} />
+              <Route exact strict path="/usdc" component={USDC} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/find" component={PoolFinder} />
               <Route exact strict path="/pool" component={Pool} />

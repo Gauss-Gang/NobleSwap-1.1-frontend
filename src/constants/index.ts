@@ -9,8 +9,8 @@ import {
 } from '../connectors';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const FACTORY_ADDRESS = '0x581B5b53AddA3C773934556A3Ee6E949D8c187Eb';
-export const ROUTER_ADDRESS = '0x1Ce4349FE6367B56528fd4EB20BCe5EADE19D00F';
+export const FACTORY_ADDRESS = '0xF455f4430Ea076197B048a9ED3d2293Aa6C793D6';
+export const ROUTER_ADDRESS = '0x12FdBd4f6e89483eaD15B4A29bb090fEe3E340ab';
 
 export const LP_TOKEN_NAME = 'Noble-LP-Token';
 export const LP_TOKEN_SYMBOL = 'NOBLE-LP';
@@ -20,13 +20,7 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[];
 };
 
-export const DAI = new Token(
-  ChainId.MAINNET,
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-  18,
-  'DAI',
-  'Dai Stablecoin'
-);
+export const DAI = new Token(ChainId.MAINNET,'0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin');
 export const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C');
 export const USDT = new Token(ChainId.MAINNET, '0xdAC17F958D2ee523a2206206994597C13D831ec7', 6, 'USDT', 'Tether USD');
 export const COMP = new Token(ChainId.MAINNET, '0xc00e94Cb662C3520282E6f5717214004A7f26888', 18, 'COMP', 'Compound');
@@ -34,16 +28,14 @@ export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth');
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC');
 
-export const GUD = new Token(ChainId.GAUSS, '0xb2Eb8384a82ddCCe38AB06516406A3aFfd00d226', 6, 'GUD', 'Gauss Stable');
+export const USDCpol = new Token(ChainId.GAUSS, '', 6, 'USDC.pol', 'Bridged USDC (Polygon)');
 
-// Testnet
-// export const GUD = new Token(ChainId.GIL, '0x976cF0F344A41560a00447343Ff831E0FE619117', 6, 'GUD', 'Gauss Stable');
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13;
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320;
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS;
-export const TIMELOCK_ADDRESS = '0xCaf9E1b372F0c5741655A641662F508f05B35D87';
+export const TIMELOCK_ADDRESS = '0x4168385a9295333A93b3BDf3a757f4C606DecBD0';
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   [TIMELOCK_ADDRESS]: 'Timelock',
@@ -62,8 +54,8 @@ const WETH_ONLY: ChainTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR, WBTC],
-  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
-  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS], GUD],
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]],
+  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS], USDCpol],
 };
 
 /**
@@ -87,8 +79,8 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [...WETH_ONLY[ChainId.ROPSTEN]],
-  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]], // Add GUD back here
-  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS]], // Add GUD back here
+  [ChainId.GIL]: [...WETH_ONLY[ChainId.GIL]],
+  [ChainId.GAUSS]: [...WETH_ONLY[ChainId.GAUSS]],
   [ChainId.GÖRLI]: [...WETH_ONLY[ChainId.GÖRLI]],
   [ChainId.KOVAN]: [...WETH_ONLY[ChainId.KOVAN]],
 };
@@ -102,6 +94,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
     [USDC, USDT],
     [DAI, USDT],
   ],
+  [ChainId.GAUSS]: [[...WETH_ONLY[ChainId.GAUSS]], USDCpol],
 };
 
 export interface WalletInfo {
@@ -204,5 +197,4 @@ export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16))
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000));
 export const ZERO_PERCENT = new Percent('0');
 export const ONE_HUNDRED_PERCENT = new Percent('1');
-// export const AMOUNT_TO_APPROVE = (10000000000 * 10 ** 18).toString(); // original
-export const AMOUNT_TO_APPROVE = '10000000000000000000000000000';
+export const AMOUNT_TO_APPROVE = '100000000000000000000';

@@ -64,7 +64,7 @@ export default function CurrencyLogo({
   return <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />;
 }
 
-export function CurrencyLogoGud({
+export function CurrencyLogoUSDC({
   currency,
   size = '24px',
   style,
