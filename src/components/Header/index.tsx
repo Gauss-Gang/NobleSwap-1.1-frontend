@@ -285,7 +285,7 @@ export default function Header() {
           {t('pool')}
         </StyledNavLink>
         <StyledNavLink id={`usdc-nav-link`} to={'/usdc'}>
-          {t('usdc')}
+          {t('USDC')}
         </StyledNavLink>
       </HeaderLinks>
 

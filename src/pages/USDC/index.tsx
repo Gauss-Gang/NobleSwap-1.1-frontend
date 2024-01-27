@@ -105,7 +105,6 @@ const ERC20_ABI = [
 
 const BRIDGE_ADDRESS = '0x3C5c39efb1E8d4d65c5Ce99672e0C53b99377975';
 
-
 export default function USDC() {
   const loadedUrlParams = useDefaultsFromURLSearch();
 
@@ -423,7 +422,6 @@ export default function USDC() {
   }, [allowance, formattedAmounts[Field.INPUT]]);
   // end fetching allowance
 
-
   return (
     <>
       <TokenWarningModal
@@ -431,10 +429,10 @@ export default function USDC() {
         tokens={importTokensNotInDefault}
         onConfirm={handleConfirmTokenWarning}
       />
-      <SwapPoolTabs active={'usdcg'} />
+      <SwapPoolTabs active={'usdc'} />
       <AppBody>
         <USDCHeader expressMode={expressMode} setExpressMode={setExpressMode} />
-        <Wrapper id="usdcg-page">
+        <Wrapper id="usdc-page">
           {/* <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -623,7 +621,3 @@ export default function USDC() {
     </>
   );
 }
-// line 679 start
-// : correctPaperBalance === false ? (
-//   <ButtonError disabled>Not enough $PAPER in wallet</ButtonError>
-// )
