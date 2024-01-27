@@ -126,7 +126,7 @@ export default function USDC() {
 
   const addPopup = useAddPopup();
 
-  // token warning 
+  // token warning
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId),
@@ -523,7 +523,7 @@ export default function USDC() {
                     library.provider
                       .request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: `0x${ChainId.POLYGON.toString(16)}` }], 
+                        params: [{ chainId: `0x${ChainId.POLYGON.toString(16)}` }],
                       })
                       .catch((switchError) => {
                         if (switchError.code === 4902) {
