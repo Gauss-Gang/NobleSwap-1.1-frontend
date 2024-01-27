@@ -21,7 +21,7 @@ import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly } from '
 import Logo from '../assets/images/logo.png';
 import NobleswapBackground from '../assets/images/nobleswap_bg.png';
 import './globals.css';
-import USDC from './usdc';
+import USDC from './USDC';
 
 const AppWrapper = styled.div`
   min-height: 100vh;
