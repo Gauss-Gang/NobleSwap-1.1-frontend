@@ -332,7 +332,7 @@ export function SettingsUSDC({ setExpressMode, expressMode }) {
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
                   Toggle Express Mode
                 </TYPE.black>
-                <QuestionHelper text="Faster bridging process - bigger fee." />
+                <QuestionHelper text="Faster bridging process - larger fee." />
               </RowFixed>
               <Toggle
                 id="toggle-express-mode-button-usdc"

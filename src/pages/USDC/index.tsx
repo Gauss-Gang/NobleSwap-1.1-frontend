@@ -35,7 +35,7 @@ import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Contract, ethers, providers } from 'ethers';
 import { parseUnits } from '@ethersproject/units';
-import BRIDGE_ABI from './USDCpolBridgeServiceABI.json';
+import BRIDGE_ABI from './USDCBridgeServiceABI.json';
 
 const ERC20_ABI = [
   {
@@ -103,7 +103,7 @@ const ERC20_ABI = [
   },
 ];
 
-const BRIDGE_ADDRESS = '0x3C5c39efb1E8d4d65c5Ce99672e0C53b99377975';
+const BRIDGE_ADDRESS = '0x68111F0213DE3207fAC35244b22eb8A2002ca9A5';
 
 export default function USDC() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -111,7 +111,6 @@ export default function USDC() {
   const [expressMode, setExpressMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [approveDone, setApproveDone] = useState<boolean>(false);
-  // const [correctPaperBalance, setCorrectPaperBalance] = useState<boolean>(false);
   const [chainSwitched, setChainSwitched] = useState<boolean>(false);
   const [token, setToken] = useState({
     symbol: 'USDC',
