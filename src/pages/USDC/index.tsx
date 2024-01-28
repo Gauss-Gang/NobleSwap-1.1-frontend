@@ -103,7 +103,7 @@ const ERC20_ABI = [
   },
 ];
 
-const BRIDGE_ADDRESS = '0x68111F0213DE3207fAC35244b22eb8A2002ca9A5';
+const BRIDGE_ADDRESS = '0xf0257Fb3Bc0A6414ab912fd2df56dbB3085b0B29';
 
 export default function USDC() {
   const loadedUrlParams = useDefaultsFromURLSearch();
@@ -563,7 +563,7 @@ export default function USDC() {
                     library.provider
                       .request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], // This switches to Polygon, but you can set up logic for POLYGON as well
+                        params: [{ chainId: `0x${ChainId.GAUSS.toString(16)}` }], 
                       })
                       .catch((switchError) => {
                         if (switchError.code === 4902) {
@@ -574,7 +574,7 @@ export default function USDC() {
                               params: [
                                 {
                                   chainId: `0x${ChainId.GAUSS.toString(16)}`,
-                                  chainName: 'Gauss Induction Labs',
+                                  chainName: 'Gauss Mainnet',
                                   nativeCurrency: {
                                     name: 'GANG',
                                     symbol: 'GANG',

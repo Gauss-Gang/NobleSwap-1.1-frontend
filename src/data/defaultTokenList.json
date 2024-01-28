@@ -1,10 +1,10 @@
 {
   "name": "NobleSwap Gauss",
-  "timestamp": "2023-11-16T07:08:08.533Z",
+  "timestamp": "2024-01-28T12:33:27.457Z",
   "version": {
     "major": 1,
     "minor": 0,
-    "patch": 3
+    "patch": 4
   },
   "logoURI": "https://nobleswap.io/logo.png",
   "keywords": [
@@ -21,19 +21,11 @@
       "logoURI": "https://nobleswap.io/logo.png"
     },
     {
-      "name": "INK Token",
-      "symbol": "INK",
-      "address": "0xe5e6dFe69aE1d74d506859E052ed7e1b5DbB9d38",
+      "name": "Bridged USDC (Gauss)",
+      "symbol": "USDC.pol",
+      "address": "0x2baFd05252ADcA1143b77a88A72E1022B59ad379",
       "chainId": 1777,
-      "decimals": 18,
-      "logoURI": "https://nobleswap.io/logo.png"
-    },
-    {
-      "name": "PAPER Token",
-      "symbol": "PAPER",
-      "address": "0x18f0Cf904adaeaC2e6bfE573d61f51D4699De72d",
-      "chainId": 1777,
-      "decimals": 18,
+      "decimals": 6,
       "logoURI": "https://nobleswap.io/logo.png"
     }
   ]

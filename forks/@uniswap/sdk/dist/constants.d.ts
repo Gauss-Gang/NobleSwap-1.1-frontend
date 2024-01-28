@@ -4,8 +4,6 @@ export declare enum ChainId {
     MAINNET = 1,
     ROPSTEN = 3,
     GIL = 1452,
-    POLYGON = 137,
-    MUMBAI = 80001,
     GAUSS = 1777,
     GÖRLI = 5,
     KOVAN = 42

@@ -103,7 +103,6 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
     [USDC, USDT],
     [DAI, USDT],
   ],
-  [ChainId.GAUSS]: [[...WETH_ONLY[ChainId.GAUSS]]],
 };
 
 export interface WalletInfo {
